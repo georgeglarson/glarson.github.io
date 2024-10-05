@@ -128,18 +128,24 @@
             saveList();
         }
 
+        let currentListName = 'default';
+
         function saveList() {
             var items = document.querySelectorAll('#goalList li');
             var list = Array.from(items).map(item => ({
                 text: item.textContent,
                 checked: item.classList.contains('checked')
             }));
-            localStorage.setItem('goalList', JSON.stringify(list));
+            let lists = JSON.parse(localStorage.getItem('lists')) || {};
+            lists[currentListName] = list;
+            localStorage.setItem('lists', JSON.stringify(lists));
+            updateListDropdown();
             generateExportLink(); // Automatically generate export link
         }
 
-        function loadList() {
-            var list = JSON.parse(localStorage.getItem('goalList')) || [];
+        function loadList(listName) {
+            let lists = JSON.parse(localStorage.getItem('lists')) || {};
+            let list = lists[listName] || [];
             var ul = document.getElementById('goalList');
             ul.innerHTML = '';
             list.forEach(item => {
@@ -148,6 +154,46 @@
                 if (item.checked) li.classList.add('checked');
                 ul.appendChild(li);
             });
+            currentListName = listName;
+            document.getElementById('listName').textContent = listName;
+        }
+
+        function createNewList() {
+            let listName = prompt("Enter a name for the new list:");
+            if (listName) {
+                currentListName = listName;
+                document.getElementById('goalList').innerHTML = '';
+                saveList();
+                loadList(listName);
+            }
+        }
+
+        function switchList() {
+            let listName = document.getElementById('listSelect').value;
+            loadList(listName);
+        }
+
+        function deleteList() {
+            if (confirm(`Are you sure you want to delete the list "${currentListName}"?`)) {
+                let lists = JSON.parse(localStorage.getItem('lists')) || {};
+                delete lists[currentListName];
+                localStorage.setItem('lists', JSON.stringify(lists));
+                updateListDropdown();
+                loadList(Object.keys(lists)[0] || 'default');
+            }
+        }
+
+        function updateListDropdown() {
+            let lists = JSON.parse(localStorage.getItem('lists')) || {};
+            let select = document.getElementById('listSelect');
+            select.innerHTML = '';
+            Object.keys(lists).forEach(listName => {
+                let option = document.createElement('option');
+                option.value = listName;
+                option.textContent = listName;
+                select.appendChild(option);
+            });
+            select.value = currentListName;
         }
 
         function getListFromURI() {
@@ -226,3 +272,10 @@
     </style>
 </body>
 </html>
+
+<div id="listManagement">
+    <h2 id="listName">default</h2>
+    <select id="listSelect" onchange="switchList()"></select>
+    <button onclick="createNewList()">New List</button>
+    <button onclick="deleteList()">Delete List</button>
+</div>
