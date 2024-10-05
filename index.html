@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Grocery List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            cursor: pointer;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            user-select: none;
+        }
+        li:last-child {
+            border-bottom: none;
+        }
+        li.checked {
+            text-decoration: line-through;
+            color: #888;
+        }
+        li::before {
+            content: '[ ]';
+            margin-right: 10px;
+        }
+        li.checked::before {
+            content: '[x]';
+        }
+    </style>
+</head>
+<body>
+    <h1>Grocery List</h1>
+    <ul id="groceryList">
+        <li>birthday cards</li>
+        <li>cake</li>
+        <li>piece of silver</li>
+        <li>raspberries</li>
+        <li>small backpack</li>
+        <li>sammiches?</li>
+        <li>prescriptions</li>
+    </ul>
+
+    <script>
+        document.getElementById('groceryList').addEventListener('click', function(e) {
+            if (e.target.tagName === 'LI') {
+                e.target.classList.toggle('checked');
+            }
+        });
+    </script>
+</body>
+</html>
