@@ -127,22 +127,22 @@
 
     <ul id="goalList">
     </ul>
-      <button id="toggleAddItem">Add New Item</button>
-      <div id="addItem" style="display: none;">
-          <input type="text" id="newItem" placeholder="Enter new item">
-          <button onclick="addNewItem()">Add Item</button>
-          <button onclick="doneAddingItems()">Done</button>
-      </div>
+    <button id="toggleAddItem">Add New Item</button>
+    <div id="addItem" style="display: none;">
+        <input type="text" id="newItem" placeholder="Enter new item">
+        <button onclick="addNewItem()">Add Item</button>
+        <button onclick="doneAddingItems()">Done</button>
+    </div>
     <div id="newListForm" style="display: none;">
         <input type="text" id="newListName" placeholder="Enter new list name">
         <button onclick="submitNewList()">Create</button>
         <button onclick="cancelNewList()">Cancel</button>
-    </div>    
+    </div>
     <div id="renameListForm" style="display: none;">
         <input type="text" id="newListNameInput" placeholder="Enter new list name">
         <button onclick="submitRenameList()">Rename</button>
         <button onclick="cancelRenameList()">Cancel</button>
-    </div>    
+    </div>
     <div id="listControls">
         <button onclick="clearCompleted()">Clear Completed</button>
         <select id="listSelect" onchange="switchList()" aria-label="Select list"></select>
@@ -204,23 +204,25 @@
                 ul.appendChild(li);
             });
             currentListName = listName;
-            
+
             // Update the title display
             let displayTitle = listName === 'CamillesList' ? "Camille's List" : listName;
             document.getElementById('listTitle').textContent = displayTitle;
+
+            // Hide 'add item' view when switching lists
+            toggleAddItemView(false);
         }
 
-          function createNewList() {
-              document.getElementById('newListForm').style.display = 'block';
-              let input = document.getElementById('newListName');
-              input.focus();
-              input.addEventListener('keyup', function(event) {
-                  if (event.key === 'Enter') {
-                      submitNewList();
-                  }
-              });
-          }
-        
+        function createNewList() {
+            document.getElementById('newListForm').style.display = 'block';
+            let input = document.getElementById('newListName');
+            input.focus();
+            input.addEventListener('keyup', function (event) {
+                if (event.key === 'Enter') {
+                    submitNewList();
+                }
+            });
+        }
 
         function submitNewList() {
             let listName = document.getElementById('newListName').value.trim();
@@ -230,6 +232,9 @@
                 saveList();
                 loadList(listName);
                 cancelNewList();
+
+                // Automatically go into 'add item' mode
+                toggleAddItemView(true);
             }
         }
 
@@ -237,18 +242,18 @@
             document.getElementById('newListForm').style.display = 'none';
             document.getElementById('newListName').value = '';
         }
-          function renameList() {
-              document.getElementById('renameListForm').style.display = 'block';
-              let input = document.getElementById('newListNameInput');
-              input.value = currentListName;
-              input.focus();
-              input.addEventListener('keyup', function(event) {
-                  if (event.key === 'Enter') {
-                      submitRenameList();
-                  }
-              });
-          }
-        
+        function renameList() {
+            document.getElementById('renameListForm').style.display = 'block';
+            let input = document.getElementById('newListNameInput');
+            input.value = currentListName;
+            input.focus();
+            input.addEventListener('keyup', function (event) {
+                if (event.key === 'Enter') {
+                    submitRenameList();
+                }
+            });
+        }
+
 
         function submitRenameList() {
             let newName = document.getElementById('newListNameInput').value.trim();
@@ -397,10 +402,12 @@
             margin-bottom: 10px;
             display: none;
         }
+
         #addItem input {
             flex-grow: 1;
             margin-right: 10px;
         }
+
         #addItem button {
             margin-left: 5px;
         }
@@ -408,6 +415,3 @@
 </body>
 
 </html>
-
-
-
