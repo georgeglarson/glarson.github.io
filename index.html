@@ -1,127 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Camille's List</title>
+      <style>
+          body {
+              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              max-width: 600px;
+              margin: 0 auto;
+              padding: 20px;
+              background-color: #f0f4f8;
+              color: #1a365d;
+          }
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camille's List</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f0f4f8;
-            color: #1a365d;
-        }
+          h1 {
+              text-align: center;
+              color: #2c5282;
+          }
 
-        h1 {
-            text-align: center;
-            color: #2c5282;
-        }
+          ul {
+              list-style-type: none;
+              padding: 0;
+          }
 
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
+          li {
+              cursor: pointer;
+              padding: 12px;
+              border-bottom: 1px solid #cbd5e0;
+              -webkit-user-select: none;
+              user-select: none;
+              transition: all 0.3s ease;
+              background-color: #ffffff;
+          }
 
-        li {
-            cursor: pointer;
-            padding: 12px;
-            border-bottom: 1px solid #cbd5e0;
-            -webkit-user-select: none;
-            user-select: none;
-            transition: all 0.3s ease;
-            background-color: #ffffff;
-        }
+          li:last-child {
+              border-bottom: none;
+          }
 
-        li:last-child {
-            border-bottom: none;
-        }
+          li.checked {
+              text-decoration: line-through;
+              color: #718096;
+              background-color: #e2e8f0;
+          }
 
-        li.checked {
-            text-decoration: line-through;
-            color: #718096;
-            background-color: #e2e8f0;
-        }
+          li::before {
+              content: '[ ]';
+              margin-right: 10px;
+              color: #4a5568;
+          }
 
-        li::before {
-            content: '[ ]';
-            margin-right: 10px;
-            color: #4a5568;
-        }
+          li.checked::before {
+              content: '[x]';
+              color: #2c5282;
+          }
 
-        li.checked::before {
-            content: '[x]';
-            color: #2c5282;
-        }
+          li:hover {
+              background-color: #edf2f7;
+          }
 
-        li:hover {
-            background-color: #edf2f7;
-        }
+          #addItem {
+              margin-top: 20px;
+              margin-bottom: 10px;
+              display: none;
+          }
 
-        #addItem {
-            margin-top: 20px;
-        }
+          #addItem input {
+              flex-grow: 1;
+              margin-right: 10px;
+          }
 
-        #newItem {
-            width: 70%;
-            padding: 8px;
-            border: 1px solid #cbd5e0;
-            border-radius: 4px;
-        }
+          #addItem button {
+              margin-left: 5px;
+          }
 
-        button {
-            padding: 8px 12px;
-            cursor: pointer;
-            background-color: #2c5282;
-            color: #ffffff;
-            border: none;
-            border-radius: 4px;
-            transition: background-color 0.3s ease;
-        }
+          #newItem {
+              width: 70%;
+              padding: 8px;
+              border: 1px solid #cbd5e0;
+              border-radius: 4px;
+          }
 
-        button:hover {
-            background-color: #2a4365;
-        }
+          button {
+              padding: 8px 12px;
+              cursor: pointer;
+              background-color: #2c5282;
+              color: #ffffff;
+              border: none;
+              border-radius: 4px;
+              transition: background-color 0.3s ease;
+          }
 
-        #toggleAddItem {
-            display: block;
-            width: 100%;
-            margin-bottom: 10px;
-            padding: 10px;
-            background-color: #4299e1;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+          button:hover {
+              background-color: #2a4365;
+          }
 
-        #toggleAddItem:hover {
-            background-color: #3182ce;
-        }
+          #toggleAddItem {
+              display: block;
+              width: 100%;
+              margin-bottom: 10px;
+              padding: 10px;
+              background-color: #4299e1;
+              color: white;
+              border: none;
+              border-radius: 4px;
+              cursor: pointer;
+          }
 
-        #listControls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
+          #toggleAddItem:hover {
+              background-color: #3182ce;
+          }
 
-        #listControls button,
-        #listControls select {
-            margin: 5px;
-            flex-grow: 1;
-        }
+          #listControls {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-top: 20px;
+              flex-wrap: wrap;
+          }
 
-        #listName {
-            text-align: center;
-            margin-top: 10px;
-        }
-    </style>
-</head>
+          #listControls button,
+          #listControls select {
+              margin: 5px;
+              flex-grow: 1;
+          }
 
+          #listName {
+              text-align: center;
+              margin-top: 10px;
+          }
+      </style>
+  </head>
 <body>
     <h1 id="listTitle">Camille's List</h1>
 
@@ -151,6 +160,7 @@
         <button id="deleteListButton" onclick="deleteList()">Delete List</button>
     </div>
     <script>
+        // Toggle item completion status
         document.getElementById('goalList').addEventListener('click', function (e) {
             if (e.target.tagName === 'LI') {
                 e.target.classList.toggle('checked');
@@ -158,6 +168,7 @@
             }
         });
 
+        // Add a new item to the list
         function addNewItem() {
             var input = document.getElementById("newItem");
             if (input.value.trim() === "") {
@@ -172,6 +183,7 @@
             saveList();
         }
 
+        // Remove all completed items from the list
         function clearCompleted() {
             var checkedItems = document.querySelectorAll('li.checked');
             checkedItems.forEach(item => item.remove());
@@ -180,6 +192,7 @@
 
         let currentListName = 'CamillesList';
 
+        // Save the current list to local storage
         function saveList() {
             var items = document.querySelectorAll('#goalList li');
             var list = Array.from(items).map(item => ({
@@ -192,6 +205,8 @@
             updateListDropdown();
             generateExportLink(); // Automatically generate export link
         }
+
+        // Load a list from local storage
         function loadList(listName = 'CamillesList') {
             let lists = JSON.parse(localStorage.getItem('lists')) || {};
             let list = lists[listName] || [];
@@ -336,10 +351,12 @@
                             if (item.checked) li.classList.add('checked');
                             ul.appendChild(li);
                         });
-                        saveList(); // Save the list after loading from URI
+                        saveList();
+                    } else {
+                        console.error('List parameter is not an array');
                     }
                 } catch (e) {
-                    console.error('Invalid list parameter', e);
+                    console.error('Error parsing list parameter:', e);
                 }
             }
         }
