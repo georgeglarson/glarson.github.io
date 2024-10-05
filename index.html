@@ -127,12 +127,12 @@
 
     <ul id="goalList">
     </ul>
-
-    <button id="toggleAddItem">Add New Item</button>
-    <div id="addItem" style="display: none;">
-        <input type="text" id="newItem" placeholder="Enter new item">
-        <button onclick="addNewItem()">Add Item</button>
-    </div>
+      <button id="toggleAddItem">Add New Item</button>
+      <div id="addItem" style="display: none;">
+          <input type="text" id="newItem" placeholder="Enter new item">
+          <button onclick="addNewItem()">Add Item</button>
+          <button onclick="doneAddingItems()">Done</button>
+      </div>
     <div id="newListForm" style="display: none;">
         <input type="text" id="newListName" placeholder="Enter new list name">
         <button onclick="submitNewList()">Create</button>
@@ -327,6 +327,11 @@
             }
         }
 
+        function doneAddingItems() {
+            toggleAddItemView(false);
+            saveList();
+        }
+
         function generateExportLink() {
             const items = document.querySelectorAll('#goalList li');
             const list = Array.from(items).map(item => ({
@@ -344,7 +349,8 @@
             var addItemDiv = document.getElementById('addItem');
             var toggleButton = document.getElementById('toggleAddItem');
             if (show) {
-                addItemDiv.style.display = 'block';
+                addItemDiv.style.display = 'flex';
+                addItemDiv.style.justifyContent = 'space-between';
                 toggleButton.style.display = 'none';
                 document.getElementById('newItem').focus();
             } else {
@@ -379,9 +385,17 @@
             margin-bottom: 10px;
             display: none;
         }
+        #addItem input {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+        #addItem button {
+            margin-left: 5px;
+        }
     </style>
 </body>
 
 </html>
+
 
 
