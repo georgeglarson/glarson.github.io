@@ -195,7 +195,10 @@
                 ul.appendChild(li);
             });
             currentListName = listName;
-            document.getElementById('listTitle').textContent = listName;
+            
+            // Update the title display
+            let displayTitle = listName === 'CamillesList' ? "Camille's List" : listName;
+            document.getElementById('listTitle').textContent = displayTitle;
         }
 
 
@@ -221,7 +224,11 @@
                 delete lists[currentListName];
                 localStorage.setItem('lists', JSON.stringify(lists));
                 currentListName = newName;
-                document.getElementById('listTitle').textContent = newName;
+                
+                // Update the title display
+                let displayTitle = newName === 'CamillesList' ? "Camille's List" : newName;
+                document.getElementById('listTitle').textContent = displayTitle;
+                
                 updateListDropdown();
             }
         }
