@@ -283,6 +283,7 @@
             }
         }
           window.onload = function() {
+              updateListDropdown(); // Add this line to populate the list selector
               loadList('CamillesList');
               getListFromURI();
               generateExportLink();
