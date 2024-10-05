@@ -100,6 +100,13 @@
     </div>
 
     <button onclick="clearCompleted()">Clear Completed</button>
+    <div id="listManagement">
+        <h2 id="listName">default</h2>
+        <select id="listSelect" onchange="switchList()" aria-label="Select list"></select>
+        <button onclick="createNewList()">New List</button>
+        <button onclick="renameList()">Rename List</button>
+        <button onclick="deleteList()">Delete List</button>
+    </div>
     <script>
         document.getElementById('goalList').addEventListener('click', function(e) {
             if (e.target.tagName === 'LI') {
@@ -165,6 +172,23 @@
                 document.getElementById('goalList').innerHTML = '';
                 saveList();
                 loadList(listName);
+            }
+        }
+
+        function renameList() {
+            let newName = prompt(`Enter a new name for the list "${currentListName}":`, currentListName);
+            if (newName && newName !== currentListName) {
+                let lists = JSON.parse(localStorage.getItem('lists')) || {};
+                if (lists[newName]) {
+                    alert('A list with this name already exists. Please choose a different name.');
+                    return;
+                }
+                lists[newName] = lists[currentListName];
+                delete lists[currentListName];
+                localStorage.setItem('lists', JSON.stringify(lists));
+                currentListName = newName;
+                document.getElementById('listName').textContent = newName;
+                updateListDropdown();
             }
         }
 
@@ -273,9 +297,5 @@
 </body>
 </html>
 
-<div id="listManagement">
-    <h2 id="listName">default</h2>
-    <select id="listSelect" onchange="switchList()"></select>
-    <button onclick="createNewList()">New List</button>
-    <button onclick="deleteList()">Delete List</button>
-</div>
+
+
