@@ -210,11 +210,17 @@
             document.getElementById('listTitle').textContent = displayTitle;
         }
 
-
-        function createNewList() {
-            document.getElementById('newListForm').style.display = 'block';
-            document.getElementById('newListName').focus();
-        }
+          function createNewList() {
+              document.getElementById('newListForm').style.display = 'block';
+              let input = document.getElementById('newListName');
+              input.focus();
+              input.addEventListener('keyup', function(event) {
+                  if (event.key === 'Enter') {
+                      submitNewList();
+                  }
+              });
+          }
+        
 
         function submitNewList() {
             let listName = document.getElementById('newListName').value.trim();
@@ -231,12 +237,18 @@
             document.getElementById('newListForm').style.display = 'none';
             document.getElementById('newListName').value = '';
         }
-
-        function renameList() {
-            document.getElementById('renameListForm').style.display = 'block';
-            document.getElementById('newListNameInput').value = currentListName;
-            document.getElementById('newListNameInput').focus();
-        }
+          function renameList() {
+              document.getElementById('renameListForm').style.display = 'block';
+              let input = document.getElementById('newListNameInput');
+              input.value = currentListName;
+              input.focus();
+              input.addEventListener('keyup', function(event) {
+                  if (event.key === 'Enter') {
+                      submitRenameList();
+                  }
+              });
+          }
+        
 
         function submitRenameList() {
             let newName = document.getElementById('newListNameInput').value.trim();
