@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,14 +14,17 @@
             background-color: #f0f4f8;
             color: #1a365d;
         }
+
         h1 {
             text-align: center;
             color: #2c5282;
         }
+
         ul {
             list-style-type: none;
             padding: 0;
         }
+
         li {
             cursor: pointer;
             padding: 12px;
@@ -30,35 +34,43 @@
             transition: all 0.3s ease;
             background-color: #ffffff;
         }
+
         li:last-child {
             border-bottom: none;
         }
+
         li.checked {
             text-decoration: line-through;
             color: #718096;
             background-color: #e2e8f0;
         }
+
         li::before {
             content: '[ ]';
             margin-right: 10px;
             color: #4a5568;
         }
+
         li.checked::before {
             content: '[x]';
             color: #2c5282;
         }
+
         li:hover {
             background-color: #edf2f7;
         }
+
         #addItem {
             margin-top: 20px;
         }
+
         #newItem {
             width: 70%;
             padding: 8px;
             border: 1px solid #cbd5e0;
             border-radius: 4px;
         }
+
         button {
             padding: 8px 12px;
             cursor: pointer;
@@ -68,9 +80,11 @@
             border-radius: 4px;
             transition: background-color 0.3s ease;
         }
+
         button:hover {
             background-color: #2a4365;
         }
+
         #toggleAddItem {
             display: block;
             width: 100%;
@@ -82,9 +96,11 @@
             border-radius: 4px;
             cursor: pointer;
         }
+
         #toggleAddItem:hover {
             background-color: #3182ce;
         }
+
         #listControls {
             display: flex;
             justify-content: space-between;
@@ -92,19 +108,22 @@
             margin-top: 20px;
             flex-wrap: wrap;
         }
+
         #listControls button,
         #listControls select {
             margin: 5px;
             flex-grow: 1;
         }
+
         #listName {
             text-align: center;
             margin-top: 10px;
         }
     </style>
 </head>
+
 <body>
-    <h1>Camille's List</h1>
+    <h1 id="listTitle">Camille's List</h1>
 
     <ul id="goalList">
     </ul>
@@ -122,9 +141,8 @@
         <button onclick="renameList()">Rename List</button>
         <button onclick="deleteList()">Delete List</button>
     </div>
-    <h2 id="listName">default</h2>
     <script>
-        document.getElementById('goalList').addEventListener('click', function(e) {
+        document.getElementById('goalList').addEventListener('click', function (e) {
             if (e.target.tagName === 'LI') {
                 e.target.classList.toggle('checked');
                 saveList();
@@ -165,7 +183,6 @@
             updateListDropdown();
             generateExportLink(); // Automatically generate export link
         }
-
         function loadList(listName = 'CamillesList') {
             let lists = JSON.parse(localStorage.getItem('lists')) || {};
             let list = lists[listName] || [];
@@ -178,8 +195,9 @@
                 ul.appendChild(li);
             });
             currentListName = listName;
-            document.getElementById('listName').textContent = listName;
+            document.getElementById('listTitle').textContent = listName;
         }
+
 
         function createNewList() {
             let listName = prompt("Enter a name for the new list:");
@@ -203,7 +221,7 @@
                 delete lists[currentListName];
                 localStorage.setItem('lists', JSON.stringify(lists));
                 currentListName = newName;
-                document.getElementById('listName').textContent = newName;
+                document.getElementById('listTitle').textContent = newName;
                 updateListDropdown();
             }
         }
@@ -239,6 +257,13 @@
         function getListFromURI() {
             const params = new URLSearchParams(window.location.search);
             const listParam = params.get('list');
+            const listNameParam = params.get('name');
+
+            if (listNameParam) {
+                currentListName = decodeURIComponent(listNameParam);
+                document.getElementById('listTitle').textContent = currentListName;
+            }
+
             if (listParam) {
                 try {
                     const list = JSON.parse(decodeURIComponent(listParam));
@@ -266,10 +291,12 @@
                 checked: item.classList.contains('checked')
             }));
             const encodedList = encodeURIComponent(JSON.stringify(list));
-            const url = `${window.location.origin}${window.location.pathname}?list=${encodedList}`;
+            const encodedListName = encodeURIComponent(currentListName);
+            const url = `${window.location.origin}${window.location.pathname}?name=${encodedListName}&list=${encodedList}`;
             window.history.pushState({}, '', url);
             console.log('Copy this link:', url);
         }
+
         function toggleAddItemView(show) {
             var addItemDiv = document.getElementById('addItem');
             var toggleButton = document.getElementById('toggleAddItem');
@@ -282,14 +309,14 @@
                 toggleButton.style.display = 'block';
             }
         }
-          window.onload = function() {
-              updateListDropdown(); // Add this line to populate the list selector
-              loadList('CamillesList');
-              getListFromURI();
-              generateExportLink();
-          };
-    
-        document.getElementById('newItem').addEventListener('keyup', function(event) {
+        window.onload = function () {
+            updateListDropdown();
+            getListFromURI(); // This now sets the currentListName if present in URL
+            loadList(currentListName);
+            generateExportLink();
+        };
+
+        document.getElementById('newItem').addEventListener('keyup', function (event) {
             if (event.key === 'Enter') {
                 if (this.value.trim() === "") {
                     toggleAddItemView(false);
@@ -299,7 +326,7 @@
             }
         });
 
-        document.getElementById('toggleAddItem').addEventListener('click', function() {
+        document.getElementById('toggleAddItem').addEventListener('click', function () {
             toggleAddItemView(true);
         });
     </script>
@@ -311,7 +338,5 @@
         }
     </style>
 </body>
+
 </html>
-
-
-
