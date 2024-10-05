@@ -151,7 +151,7 @@
             saveList();
         }
 
-        let currentListName = 'default';
+        let currentListName = 'CamillesList';
 
         function saveList() {
             var items = document.querySelectorAll('#goalList li');
@@ -166,7 +166,7 @@
             generateExportLink(); // Automatically generate export link
         }
 
-        function loadList(listName) {
+        function loadList(listName = 'CamillesList') {
             let lists = JSON.parse(localStorage.getItem('lists')) || {};
             let list = lists[listName] || [];
             var ul = document.getElementById('goalList');
@@ -282,13 +282,12 @@
                 toggleButton.style.display = 'block';
             }
         }
-
-        window.onload = function() {
-            loadList();
-            getListFromURI();
-            generateExportLink(); // Automatically update the URL after loading the list
-        };
-
+          window.onload = function() {
+              loadList('CamillesList');
+              getListFromURI();
+              generateExportLink();
+          };
+    
         document.getElementById('newItem').addEventListener('keyup', function(event) {
             if (event.key === 'Enter') {
                 if (this.value.trim() === "") {
