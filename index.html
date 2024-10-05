@@ -110,6 +110,10 @@
 
         function addNewItem() {
             var input = document.getElementById("newItem");
+            if (input.value.trim() === "") {
+                toggleAddItemView(false);
+                return;
+            }
             var li = document.createElement("li");
             li.textContent = input.value;
             document.getElementById("goalList").appendChild(li);
@@ -179,6 +183,19 @@
             console.log('Copy this link:', url); // Log the link to the console
         }
 
+        function toggleAddItemView(show) {
+            var addItemDiv = document.getElementById('addItem');
+            var toggleButton = document.getElementById('toggleAddItem');
+            if (show) {
+                addItemDiv.style.display = 'block';
+                toggleButton.style.display = 'none';
+                document.getElementById('newItem').focus();
+            } else {
+                addItemDiv.style.display = 'none';
+                toggleButton.style.display = 'block';
+            }
+        }
+
         window.onload = function() {
             loadList();
             getListFromURI();
@@ -187,18 +204,16 @@
 
         document.getElementById('newItem').addEventListener('keyup', function(event) {
             if (event.key === 'Enter') {
-                addNewItem();
+                if (this.value.trim() === "") {
+                    toggleAddItemView(false);
+                } else {
+                    addNewItem();
+                }
             }
         });
 
         document.getElementById('toggleAddItem').addEventListener('click', function() {
-            var addItemDiv = document.getElementById('addItem');
-            if (addItemDiv.style.display === 'none') {
-                addItemDiv.style.display = 'block';
-                document.getElementById('newItem').focus();
-            } else {
-                addItemDiv.style.display = 'none';
-            }
+            toggleAddItemView(true);
         });
     </script>
 </body>
