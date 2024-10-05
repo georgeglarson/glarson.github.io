@@ -85,6 +85,22 @@
         #toggleAddItem:hover {
             background-color: #3182ce;
         }
+        #listControls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        #listControls button,
+        #listControls select {
+            margin: 5px;
+            flex-grow: 1;
+        }
+        #listName {
+            text-align: center;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -99,14 +115,14 @@
         <button onclick="addNewItem()">Add Item</button>
     </div>
 
-    <button onclick="clearCompleted()">Clear Completed</button>
-    <div id="listManagement">
-        <h2 id="listName">default</h2>
+    <div id="listControls">
+        <button onclick="clearCompleted()">Clear Completed</button>
         <select id="listSelect" onchange="switchList()" aria-label="Select list"></select>
         <button onclick="createNewList()">New List</button>
         <button onclick="renameList()">Rename List</button>
         <button onclick="deleteList()">Delete List</button>
     </div>
+    <h2 id="listName">default</h2>
     <script>
         document.getElementById('goalList').addEventListener('click', function(e) {
             if (e.target.tagName === 'LI') {
