@@ -161,9 +161,11 @@
                         ul.innerHTML = '';
                         list.forEach(item => {
                             const li = document.createElement('li');
-                            li.textContent = item;
+                            li.textContent = item.text;
+                            if (item.checked) li.classList.add('checked');
                             ul.appendChild(li);
                         });
+                        saveList(); // Save the list after loading from URI
                     }
                 } catch (e) {
                     console.error('Invalid list parameter', e);
@@ -173,16 +175,15 @@
 
         function generateExportLink() {
             const items = document.querySelectorAll('#goalList li');
-            const list = Array.from(items).map(item => {
-                const status = item.classList.contains('checked') ? '1' : '0';
-                return status + item.textContent;
-            });
+            const list = Array.from(items).map(item => ({
+                text: item.textContent,
+                checked: item.classList.contains('checked')
+            }));
             const encodedList = encodeURIComponent(JSON.stringify(list));
             const url = `${window.location.origin}${window.location.pathname}?list=${encodedList}`;
-            window.history.pushState({}, '', url); // Update the URL in the browser
-            console.log('Copy this link:', url); // Log the link to the console
+            window.history.pushState({}, '', url);
+            console.log('Copy this link:', url);
         }
-
         function toggleAddItemView(show) {
             var addItemDiv = document.getElementById('addItem');
             var toggleButton = document.getElementById('toggleAddItem');
@@ -216,6 +217,12 @@
             toggleAddItemView(true);
         });
     </script>
+    <style>
+        #addItem {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            display: none;
+        }
+    </style>
 </body>
 </html>
-
