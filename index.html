@@ -154,7 +154,9 @@
     </div>
     <div id="listControls">
         <button onclick="clearCompleted()">Clear Completed</button>
-        <select id="listSelect" onchange="switchList()" aria-label="Select list"></select>
+            <select id="listSelect" onchange="switchList()" aria-label="Select list">
+                <option value="" disabled selected>Choose a list</option>
+            </select>
         <button onclick="createNewList()">New List</button>
         <button onclick="renameList()">Rename List</button>
         <button id="deleteListButton" onclick="deleteList()">Delete List</button>
@@ -194,16 +196,21 @@
 
         // Save the current list to local storage
         function saveList() {
-            var items = document.querySelectorAll('#goalList li');
-            var list = Array.from(items).map(item => ({
-                text: item.textContent,
-                checked: item.classList.contains('checked')
-            }));
-            let lists = JSON.parse(localStorage.getItem('lists')) || {};
-            lists[currentListName] = list;
-            localStorage.setItem('lists', JSON.stringify(lists));
-            updateListDropdown();
-            generateExportLink(); // Automatically generate export link
+            try {
+                var items = document.querySelectorAll('#goalList li');
+                var list = Array.from(items).map(item => ({
+                    text: item.textContent,
+                    checked: item.classList.contains('checked')
+                }));
+                let lists = JSON.parse(localStorage.getItem('lists')) || {};
+                lists[currentListName] = list;
+                localStorage.setItem('lists', JSON.stringify(lists));
+                updateListDropdown();
+                generateExportLink();
+            } catch (error) {
+                console.error('Error saving list:', error);
+                alert('There was an error saving your list. Please try again.');
+            }
         }
 
         // Load a list from local storage
@@ -392,26 +399,31 @@
                 toggleButton.style.display = 'block';
             }
         }
-        window.onload = function () {
+        function initializeApp() {
             updateListDropdown();
-            getListFromURI(); // This now sets the currentListName if present in URL
+            getListFromURI();
             loadList(currentListName);
             generateExportLink();
-        };
+            
+            document.getElementById('toggleAddItem').addEventListener('click', function() {
+                toggleAddItemView(true);
+            });
+        }
 
-        document.getElementById('newItem').addEventListener('keyup', function (event) {
-            if (event.key === 'Enter') {
-                if (this.value.trim() === "") {
-                    toggleAddItemView(false);
-                } else {
-                    addNewItem();
+        window.onload = initializeApp;
+
+        function handleEnterKey(inputElement, submitFunction) {
+            inputElement.addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    submitFunction();
                 }
-            }
-        });
+            });
+        }
 
-        document.getElementById('toggleAddItem').addEventListener('click', function () {
-            toggleAddItemView(true);
-        });
+        // Usage:
+        handleEnterKey(document.getElementById('newListName'), submitNewList);
+        handleEnterKey(document.getElementById('newListNameInput'), submitRenameList);
+        handleEnterKey(document.getElementById('newItem'), addNewItem);
     </script>
     <style>
         #addItem {
@@ -428,7 +440,6 @@
         #addItem button {
             margin-left: 5px;
         }
-    </style>
-</body>
+    </style></body>
 
 </html>
