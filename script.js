@@ -1,14 +1,25 @@
 
 function saveAsPreset() {
-    const presetName = prompt("Enter a name for this preset:");
+    document.getElementById('savePresetForm').style.display = 'block';
+    let input = document.getElementById('presetName');
+    input.value = '';
+    input.focus();
+}
+
+function submitSavePreset() {
+    const presetName = document.getElementById('presetName').value.trim();
     if (presetName) {
         const lists = getListsFromStorage();
         lists[`🔁 ${presetName}`] = lists[currentListName];
         saveListsToStorage(lists);
         updateListDropdown();
+        cancelSavePreset();
     }
 }
-function loadPreset() {
+
+function cancelSavePreset() {
+    document.getElementById('savePresetForm').style.display = 'none';
+} function loadPreset() {
     const presetName = document.getElementById('presetSelect').value;
     if (presetName) {
         const presets = JSON.parse(localStorage.getItem('presets')) || {};
@@ -54,6 +65,12 @@ function saveListsToStorage(lists) {
 
 function saveList() {
     try {
+        // Check if the current list is a preset
+        if (currentListName.startsWith('🔁')) {
+            // If it's a preset, don't save
+            return;
+        }
+
         const items = Array.from(document.querySelectorAll('#goalList li')).map(item => ({
             text: item.textContent,
             checked: item.classList.contains('checked')
@@ -68,7 +85,6 @@ function saveList() {
         alert('There was an error saving your list. Please try again.');
     }
 }
-
 function createListItem(text, checked = false) {
     const li = document.createElement('li');
     li.textContent = text;
