@@ -398,7 +398,6 @@ function initializeApp() {
     });
     document.getElementById('app-version').textContent = APP_VERSION;
 }
-
 window.onload = initializeApp;
 
 function handleEnterKey(inputElement, submitFunction) {
@@ -413,4 +412,8 @@ handleEnterKey(document.getElementById('newListName'), submitNewList);
 handleEnterKey(document.getElementById('newListNameInput'), submitRenameList);
 handleEnterKey(document.getElementById('newItem'), addNewItem);
 
-const APP_VERSION = '5.2.1';
+const APP_VERSION = '5.2.2';
+
+document.addEventListener('DOMContentLoaded', () => {
+    startTour();
+});

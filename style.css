@@ -276,3 +276,29 @@ button:active {
     border-radius: 5px;
     font-size: 16px;
 }
+
+.tour-tooltip {
+    position: absolute;
+    background: white;
+    border: 1px solid #ddd;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    color: #333;
+    /* Dark text color for visibility */
+    font-size: 14px;
+    min-width: 200px;
+}
+
+.tour-tooltip p {
+    margin-bottom: 10px;
+}
+
+.tour-tooltip button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    margin-right: 5px;
+    cursor: pointer;
+}
