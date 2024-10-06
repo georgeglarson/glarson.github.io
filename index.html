@@ -130,7 +130,6 @@
         #fileInput {
             margin-top: 20px;
         }
-
         #importTextArea {
             width: 100%;
             margin-top: 20px;
@@ -141,10 +140,8 @@
         }
     </style>
 </head>
-
 <body>
     <h1 id="listTitle">Camille's List</h1>
-
     <ul id="goalList">
     </ul>
     <button id="toggleAddItem">Add New Item</button>
@@ -172,6 +169,7 @@
         <button onclick="renameList()">Rename List</button>
         <button id="deleteListButton" onclick="deleteList()">Delete List</button>
         <button onclick="toggleImportExportControls()">Import/Export</button>
+        <button onclick="saveAsPreset()">Save as Preset</button>
     </div>
     <div id="importExportControls">
         <div id="importExportTabs">
@@ -179,7 +177,6 @@
             <button class="tab-button" onclick="openTab(event, 'importText')">Import Text</button>
             <button class="tab-button" onclick="openTab(event, 'exportList')">Export List</button>
         </div>
-
         <div id="importFile" class="tab-content">
             <input type="file" id="fileInput" accept=".json,.csv" aria-label="Choose file to import">
             <button onclick="importFile()">Import File</button>
@@ -196,15 +193,32 @@
     </div>
     <button id="themeToggle" onclick="toggleTheme()">🌙</button>
     <script>
-        // Toggle item completion status
+        function saveAsPreset() {
+            const presetName = prompt("Enter a name for this preset:");
+            if (presetName) {
+                const lists = getListsFromStorage();
+                lists[`🔁 ${presetName}`] = lists[currentListName];
+                saveListsToStorage(lists);
+                updateListDropdown();
+            }
+        }
+        function loadPreset() {
+            const presetName = document.getElementById('presetSelect').value;
+            if (presetName) {
+                const presets = JSON.parse(localStorage.getItem('presets')) || {};
+                const preset = presets[presetName];
+                if (preset) {
+                    updateListWithImportedData(preset);
+                    document.getElementById('listTitle').textContent = `${presetName} (preset)`;
+                }
+            }
+        }
         document.getElementById('goalList').addEventListener('click', function (e) {
             if (e.target.tagName === 'LI') {
                 e.target.classList.toggle('checked');
                 saveList();
             }
         });
-
-        // Add a new item to the list
         function addNewItem() {
             var input = document.getElementById("newItem");
             if (input.value.trim() === "") {
@@ -215,19 +229,15 @@
             li.textContent = input.value;
             document.getElementById("goalList").appendChild(li);
             input.value = "";
-            input.focus(); // Set focus back to the input field
+            input.focus();
             saveList();
         }
-
-        // Remove all completed items from the list
         function clearCompleted() {
             var checkedItems = document.querySelectorAll('li.checked');
             checkedItems.forEach(item => item.remove());
             saveList();
         }
-
         let currentListName = 'CamillesList';
-        // Save the current list to local storage
         function getListsFromStorage() {
             return JSON.parse(localStorage.getItem('lists')) || {};
         }
@@ -259,7 +269,6 @@
             if (checked) li.classList.add('checked');
             return li;
         }
-
         function loadList(listName = 'CamillesList') {
             const lists = getListsFromStorage();
             const list = lists[listName] || [];
@@ -269,10 +278,10 @@
                 ul.appendChild(createListItem(item.text, item.checked));
             });
             currentListName = listName;
-            document.getElementById('listTitle').textContent = listName === 'CamillesList' ? "Camille's List" : listName;
+            const displayName = listName.startsWith('🔁') ? `${listName.substring(2)} (preset)` : listName;
+            document.getElementById('listTitle').textContent = displayName === 'CamillesList' ? "Camille's List" : displayName;
             toggleAddItemView(false);
         }
-
 
         function createNewList() {
             document.getElementById('newListForm').style.display = 'block';
@@ -293,8 +302,6 @@
                 saveList();
                 loadList(listName);
                 cancelNewList();
-
-                // Automatically go into 'add item' mode
                 toggleAddItemView(true);
             }
         }
@@ -337,10 +344,20 @@
         function cancelRenameList() {
             document.getElementById('renameListForm').style.display = 'none';
         }
-
         function switchList() {
             let listName = document.getElementById('listSelect').value;
-            loadList(listName);
+            if (listName.startsWith('🔁')) {
+                const presetName = listName.substring(2);
+                const lists = getListsFromStorage();
+                const preset = lists[listName];
+                if (preset) {
+                    updateListWithImportedData(preset);
+                    document.getElementById('listTitle').textContent = `${presetName} (Preset)`;
+                    currentListName = listName;
+                }
+            } else {
+                loadList(listName);
+            }
         }
 
         function deleteList() {
@@ -360,9 +377,8 @@
                 loadList(Object.keys(lists)[0] || 'default');
             }
         }
-
         function updateListDropdown() {
-            let lists = JSON.parse(localStorage.getItem('lists')) || {};
+            let lists = getListsFromStorage();
             let select = document.getElementById('listSelect');
             select.innerHTML = '';
             Object.keys(lists).forEach(listName => {
@@ -538,7 +554,7 @@
             getListFromURI();
             loadList(currentListName);
             generateExportLink();
-
+            updatePresetDropdown();
             document.getElementById('toggleAddItem').addEventListener('click', function () {
                 toggleAddItemView(true);
             });
@@ -554,7 +570,6 @@
             });
         }
 
-        // Usage:
         handleEnterKey(document.getElementById('newListName'), submitNewList);
         handleEnterKey(document.getElementById('newListNameInput'), submitRenameList);
         handleEnterKey(document.getElementById('newItem'), addNewItem);
