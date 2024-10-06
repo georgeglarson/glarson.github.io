@@ -174,11 +174,25 @@
         <button onclick="toggleImportExportControls()">Import/Export</button>
     </div>
     <div id="importExportControls">
-        <input type="file" id="fileInput" accept=".json,.csv" aria-label="Choose file to import">
-        <button onclick="importFile()">Import File</button>
-        <textarea id="importTextArea" rows="5" cols="50" placeholder="Paste your JSON or CSV data here"></textarea>
-        <button onclick="importTextData()">Import Text Data</button>
-        <button onclick="exportList()">Export List</button>
+        <div id="importExportTabs">
+            <button class="tab-button active" onclick="openTab(event, 'importFile')">Import File</button>
+            <button class="tab-button" onclick="openTab(event, 'importText')">Import Text</button>
+            <button class="tab-button" onclick="openTab(event, 'exportList')">Export List</button>
+        </div>
+
+        <div id="importFile" class="tab-content">
+            <input type="file" id="fileInput" accept=".json,.csv" aria-label="Choose file to import">
+            <button onclick="importFile()">Import File</button>
+        </div>
+
+        <div id="importText" class="tab-content" style="display:none">
+            <textarea id="importTextArea" rows="5" cols="50" placeholder="Paste your JSON or CSV data here"></textarea>
+            <button onclick="importTextData()">Import Text Data</button>
+        </div>
+
+        <div id="exportList" class="tab-content" style="display:none">
+            <button onclick="exportList()">Export List</button>
+        </div>
     </div>
     <button id="themeToggle" onclick="toggleTheme()">🌙</button>
     <script>
@@ -506,6 +520,20 @@
             const themeToggle = document.getElementById('themeToggle');
             themeToggle.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
         }
+        function openTab(evt, tabName) {
+            var i, tabContent, tabButtons;
+            tabContent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabContent.length; i++) {
+                tabContent[i].style.display = "none";
+            }
+            tabButtons = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].className = tabButtons[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
 
         function initializeApp() {
             updateListDropdown();
@@ -602,6 +630,30 @@
         li,
         button {
             transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .tab-button {
+            background-color: #071272;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 10px 20px;
+            transition: 0.3s;
+        }
+
+        .tab-button:hover {
+            background-color: #9a94f7;
+        }
+
+        .tab-button.active {
+            background-color: #5847a2;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-top: none;
         }
 
         li::before {
