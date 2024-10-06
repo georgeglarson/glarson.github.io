@@ -1,136 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Camille's List</title>
-      <style>
-          body {
-              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-              max-width: 600px;
-              margin: 0 auto;
-              padding: 20px;
-              background-color: #f0f4f8;
-              color: #1a365d;
-          }
 
-          h1 {
-              text-align: center;
-              color: #2c5282;
-          }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camille's List</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f4f8;
+            color: #1a365d;
+        }
 
-          ul {
-              list-style-type: none;
-              padding: 0;
-          }
+        h1 {
+            text-align: center;
+            color: #2c5282;
+        }
 
-          li {
-              cursor: pointer;
-              padding: 12px;
-              border-bottom: 1px solid #cbd5e0;
-              -webkit-user-select: none;
-              user-select: none;
-              transition: all 0.3s ease;
-              background-color: #ffffff;
-          }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
 
-          li:last-child {
-              border-bottom: none;
-          }
+        li {
+            cursor: pointer;
+            padding: 12px;
+            border-bottom: 1px solid #cbd5e0;
+            -webkit-user-select: none;
+            user-select: none;
+            transition: all 0.3s ease;
+            background-color: #ffffff;
+        }
 
-          li.checked {
-              text-decoration: line-through;
-              color: #718096;
-              background-color: #e2e8f0;
-          }
+        li:last-child {
+            border-bottom: none;
+        }
 
-          li::before {
-              content: '[ ]';
-              margin-right: 10px;
-              color: #4a5568;
-          }
+        li.checked {
+            text-decoration: line-through;
+            color: #718096;
+            background-color: #e2e8f0;
+        }
 
-          li.checked::before {
-              content: '[x]';
-              color: #2c5282;
-          }
+        li::before {
+            content: '[ ]';
+            margin-right: 10px;
+            color: #4a5568;
+        }
 
-          li:hover {
-              background-color: #edf2f7;
-          }
+        li.checked::before {
+            content: '[x]';
+            color: #2c5282;
+        }
 
-          #addItem {
-              margin-top: 20px;
-              margin-bottom: 10px;
-              display: none;
-          }
+        li:hover {
+            background-color: #edf2f7;
+        }
 
-          #addItem input {
-              flex-grow: 1;
-              margin-right: 10px;
-          }
+        #addItem {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            display: none;
+        }
 
-          #addItem button {
-              margin-left: 5px;
-          }
+        #addItem input {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
 
-          #newItem {
-              width: 70%;
-              padding: 8px;
-              border: 1px solid #cbd5e0;
-              border-radius: 4px;
-          }
+        #addItem button {
+            margin-left: 5px;
+        }
 
-          button {
-              padding: 8px 12px;
-              cursor: pointer;
-              background-color: #2c5282;
-              color: #ffffff;
-              border: none;
-              border-radius: 4px;
-              transition: background-color 0.3s ease;
-          }
+        #newItem {
+            width: 70%;
+            padding: 8px;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+        }
 
-          button:hover {
-              background-color: #2a4365;
-          }
+        button {
+            padding: 8px 12px;
+            cursor: pointer;
+            background-color: #2c5282;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
 
-          #toggleAddItem {
-              display: block;
-              width: 100%;
-              margin-bottom: 10px;
-              padding: 10px;
-              background-color: #4299e1;
-              color: white;
-              border: none;
-              border-radius: 4px;
-              cursor: pointer;
-          }
+        button:hover {
+            background-color: #2a4365;
+        }
 
-          #toggleAddItem:hover {
-              background-color: #3182ce;
-          }
+        #toggleAddItem {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
 
-          #listControls {
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              margin-top: 20px;
-              flex-wrap: wrap;
-          }
+        #toggleAddItem:hover {
+            background-color: #3182ce;
+        }
 
-          #listControls button,
-          #listControls select {
-              margin: 5px;
-              flex-grow: 1;
-          }
+        #listControls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
 
-          #listName {
-              text-align: center;
-              margin-top: 10px;
-          }
-      </style>
-  </head>
+        #listControls button,
+        #listControls select {
+            margin: 5px;
+            flex-grow: 1;
+        }
+
+        #listName {
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
 <body>
     <h1 id="listTitle">Camille's List</h1>
 
@@ -154,13 +156,19 @@
     </div>
     <div id="listControls">
         <button onclick="clearCompleted()">Clear Completed</button>
-            <select id="listSelect" onchange="switchList()" aria-label="Select list">
-                <option value="" disabled selected>Choose a list</option>
-            </select>
+        <select id="listSelect" onchange="switchList()" aria-label="Select list">
+            <option value="" disabled selected>Choose a list</option>
+        </select>
         <button onclick="createNewList()">New List</button>
         <button onclick="renameList()">Rename List</button>
         <button id="deleteListButton" onclick="deleteList()">Delete List</button>
     </div>
+    <input type="file" id="fileInput" accept=".json,.csv" aria-label="Choose file to import">
+    <button onclick="importFile()">Import File</button>
+    <textarea id="importTextArea" rows="5" cols="50" placeholder="Paste your JSON or CSV data here"></textarea>
+    <button onclick="importTextData()">Import Text Data</button>
+    <button onclick="exportList()">Export List</button>
+
     <script>
         // Toggle item completion status
         document.getElementById('goalList').addEventListener('click', function (e) {
@@ -373,6 +381,85 @@
             saveList();
         }
 
+        function importFile() {
+            const file = document.getElementById('fileInput').files[0];
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const content = e.target.result;
+                processImportedData(content, file.name.split('.').pop());
+            };
+            reader.readAsText(file);
+        }
+
+        function importTextData() {
+            const content = document.getElementById('importTextArea').value;
+            const format = detectFormat(content);
+            processImportedData(content, format);
+        }
+
+        function detectFormat(content) {
+            try {
+                JSON.parse(content);
+                return 'json';
+            } catch (e) {
+                return 'csv';
+            }
+        }
+
+        function processImportedData(content, format) {
+            let list;
+            if (format === 'json') {
+                list = JSON.parse(content);
+            } else {
+                list = parseCSV(content);
+            }
+            // Process the list and update the UI
+            updateListWithImportedData(list);
+        }
+        function parseCSV(content) {
+            const lines = content.split('\n');
+            return lines.map(line => {
+                const [text, checked] = line.split(',');
+                return {
+                    text: text.trim(),
+                    checked: checked.trim().toLowerCase() === 'true'
+                };
+            }).filter(item => item.text !== '');
+        }
+
+
+        function updateListWithImportedData(list) {
+            const ul = document.getElementById('goalList');
+            ul.innerHTML = '';
+            list.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item.text;
+                if (item.checked) li.classList.add('checked');
+                ul.appendChild(li);
+            });
+            saveList();
+        }
+
+        function exportList() {
+            const items = document.querySelectorAll('#goalList li');
+            const list = Array.from(items).map(item => ({
+                text: item.textContent,
+                checked: item.classList.contains('checked')
+            }));
+
+            const content = JSON.stringify(list, null, 2);
+            const blob = new Blob([content], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${currentListName}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
         function generateExportLink() {
             const items = document.querySelectorAll('#goalList li');
             const list = Array.from(items).map(item => ({
@@ -404,8 +491,8 @@
             getListFromURI();
             loadList(currentListName);
             generateExportLink();
-            
-            document.getElementById('toggleAddItem').addEventListener('click', function() {
+
+            document.getElementById('toggleAddItem').addEventListener('click', function () {
                 toggleAddItemView(true);
             });
         }
@@ -413,7 +500,7 @@
         window.onload = initializeApp;
 
         function handleEnterKey(inputElement, submitFunction) {
-            inputElement.addEventListener('keyup', function(event) {
+            inputElement.addEventListener('keyup', function (event) {
                 if (event.key === 'Enter') {
                     submitFunction();
                 }
@@ -440,6 +527,7 @@
         #addItem button {
             margin-left: 5px;
         }
-    </style></body>
+    </style>
+</body>
 
 </html>
