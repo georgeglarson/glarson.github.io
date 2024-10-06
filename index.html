@@ -227,52 +227,52 @@
         }
 
         let currentListName = 'CamillesList';
-          // Save the current list to local storage
-          function getListsFromStorage() {
-              return JSON.parse(localStorage.getItem('lists')) || {};
-          }
+        // Save the current list to local storage
+        function getListsFromStorage() {
+            return JSON.parse(localStorage.getItem('lists')) || {};
+        }
 
-          function saveListsToStorage(lists) {
-              localStorage.setItem('lists', JSON.stringify(lists));
-          }
+        function saveListsToStorage(lists) {
+            localStorage.setItem('lists', JSON.stringify(lists));
+        }
 
-          function saveList() {
-              try {
-                  const items = Array.from(document.querySelectorAll('#goalList li')).map(item => ({
-                      text: item.textContent,
-                      checked: item.classList.contains('checked')
-                  }));
-                  const lists = getListsFromStorage();
-                  lists[currentListName] = items;
-                  saveListsToStorage(lists);
-                  updateListDropdown();
-                  generateExportLink();
-              } catch (error) {
-                  console.error('Error saving list:', error);
-                  alert('There was an error saving your list. Please try again.');
-              }
-          }
-        
-          function createListItem(text, checked = false) {
-              const li = document.createElement('li');
-              li.textContent = text;
-              if (checked) li.classList.add('checked');
-              return li;
-          }
+        function saveList() {
+            try {
+                const items = Array.from(document.querySelectorAll('#goalList li')).map(item => ({
+                    text: item.textContent,
+                    checked: item.classList.contains('checked')
+                }));
+                const lists = getListsFromStorage();
+                lists[currentListName] = items;
+                saveListsToStorage(lists);
+                updateListDropdown();
+                generateExportLink();
+            } catch (error) {
+                console.error('Error saving list:', error);
+                alert('There was an error saving your list. Please try again.');
+            }
+        }
 
-          function loadList(listName = 'CamillesList') {
-              const lists = getListsFromStorage();
-              const list = lists[listName] || [];
-              const ul = document.getElementById('goalList');
-              ul.innerHTML = '';
-              list.forEach(item => {
-                  ul.appendChild(createListItem(item.text, item.checked));
-              });
-              currentListName = listName;
-              document.getElementById('listTitle').textContent = listName === 'CamillesList' ? "Camille's List" : listName;
-              toggleAddItemView(false);
-          }
-        
+        function createListItem(text, checked = false) {
+            const li = document.createElement('li');
+            li.textContent = text;
+            if (checked) li.classList.add('checked');
+            return li;
+        }
+
+        function loadList(listName = 'CamillesList') {
+            const lists = getListsFromStorage();
+            const list = lists[listName] || [];
+            const ul = document.getElementById('goalList');
+            ul.innerHTML = '';
+            list.forEach(item => {
+                ul.appendChild(createListItem(item.text, item.checked));
+            });
+            currentListName = listName;
+            document.getElementById('listTitle').textContent = listName === 'CamillesList' ? "Camille's List" : listName;
+            toggleAddItemView(false);
+        }
+
 
         function createNewList() {
             document.getElementById('newListForm').style.display = 'block';
@@ -451,7 +451,6 @@
                 };
             }).filter(item => item.text !== '');
         }
-
         function updateListWithImportedData(list) {
             const ul = document.getElementById('goalList');
             ul.innerHTML = '';
@@ -460,14 +459,12 @@
             });
             saveList();
         }
-
         function getListData() {
             return Array.from(document.querySelectorAll('#goalList li')).map(item => ({
                 text: item.textContent,
                 checked: item.classList.contains('checked')
             }));
         }
-
         function exportList() {
             const list = getListData();
             const content = JSON.stringify(list, null, 2);
@@ -481,7 +478,6 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         }
-
         function generateExportLink() {
             const list = getListData();
             const encodedList = encodeURIComponent(JSON.stringify(list));
@@ -494,7 +490,6 @@
             const controls = document.getElementById('importExportControls');
             controls.classList.toggle('visible');
         }
-
         function toggleAddItemView(show) {
             var addItemDiv = document.getElementById('addItem');
             var toggleButton = document.getElementById('toggleAddItem');
@@ -508,10 +503,21 @@
                 toggleButton.style.display = 'block';
             }
         }
+        function loadThemePreference() {
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+                document.getElementById('themeToggle').textContent = '☀️';
+            }
+        }
         function toggleTheme() {
             document.body.classList.toggle('dark-mode');
             const themeToggle = document.getElementById('themeToggle');
-            themeToggle.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            themeToggle.textContent = isDarkMode ? '☀️' : '🌙';
+
+            // Store the theme preference in localStorage
+            localStorage.setItem('darkMode', isDarkMode);
         }
         function openTab(evt, tabName) {
             var i, tabContent, tabButtons;
@@ -526,9 +532,8 @@
             document.getElementById(tabName).style.display = "block";
             evt.currentTarget.className += " active";
         }
-
-
         function initializeApp() {
+            loadThemePreference();
             updateListDropdown();
             getListFromURI();
             loadList(currentListName);
