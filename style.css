@@ -1,3 +1,24 @@
+#floating-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    text-align: center;
+    padding: 10px;
+    font-size: 14px;
+}
+
+#floating-footer a {
+    color: #add8e6;
+    text-decoration: none;
+}
+
+#floating-footer a:hover {
+    text-decoration: underline;
+}
+
 #addItem {
     margin-top: 20px;
     margin-bottom: 10px;
