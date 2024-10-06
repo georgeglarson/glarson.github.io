@@ -28,6 +28,11 @@
         <button onclick="submitRenameList()">Rename</button>
         <button onclick="cancelRenameList()">Cancel</button>
     </div>
+    <div id="savePresetForm" style="display: none;">
+        <input type="text" id="presetNameInput" placeholder="Enter preset name">
+        <button onclick="submitSavePreset()">Save</button>
+        <button onclick="cancelSavePreset()">Cancel</button>
+    </div>
     <div id="listControls">
         <button onclick="clearCompleted()">Clear Completed</button>
         <select id="listSelect" onchange="switchList()" aria-label="Select list">
