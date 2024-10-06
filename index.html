@@ -8,16 +8,18 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
             padding: 20px;
             background-color: #f0f4f8;
-            color: #1a365d;
+            color: #2c5282;
         }
 
         h1 {
             text-align: center;
             color: #2c5282;
+            font-size: 2.5em;
+            margin-bottom: 30px;
         }
 
         ul {
@@ -27,16 +29,30 @@
 
         li {
             cursor: pointer;
-            padding: 12px;
-            border-bottom: 1px solid #cbd5e0;
-            -webkit-user-select: none;
-            user-select: none;
-            transition: all 0.3s ease;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
             background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            animation: fadeIn 0.3s ease;
         }
 
-        li:last-child {
-            border-bottom: none;
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        li:hover {
+            background-color: #edf2f7;
+            transform: translateY(-2px);
         }
 
         li.checked {
@@ -46,77 +62,62 @@
         }
 
         li::before {
-            content: '[ ]';
+            content: '◻️';
             margin-right: 10px;
             color: #4a5568;
         }
 
         li.checked::before {
-            content: '[x]';
+            content: '✅';
             color: #2c5282;
         }
 
-        li:hover {
-            background-color: #edf2f7;
-        }
-
-        #addItem {
+        #addItem,
+        #newListForm,
+        #renameListForm {
+            display: flex;
             margin-top: 20px;
-            margin-bottom: 10px;
-            display: none;
+            margin-bottom: 20px;
         }
 
-        #addItem input {
+        input[type="text"],
+        select {
             flex-grow: 1;
-            margin-right: 10px;
-        }
-
-        #addItem button {
-            margin-left: 5px;
-        }
-
-        #newItem {
-            width: 70%;
-            padding: 8px;
+            padding: 10px;
             border: 1px solid #cbd5e0;
-            border-radius: 4px;
+            border-radius: 5px;
+            font-size: 16px;
         }
 
         button {
-            padding: 8px 12px;
+            padding: 10px 15px;
             cursor: pointer;
-            background-color: #2c5282;
+            background-color: #4299e1;
             color: #ffffff;
             border: none;
-            border-radius: 4px;
-            transition: background-color 0.3s ease;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin-left: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         button:hover {
-            background-color: #2a4365;
-        }
-
-        #toggleAddItem {
-            display: block;
-            width: 100%;
-            margin-bottom: 10px;
-            padding: 10px;
-            background-color: #4299e1;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        #toggleAddItem:hover {
             background-color: #3182ce;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
 
         #listControls {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 20px;
+            margin-top: 30px;
             flex-wrap: wrap;
         }
 
@@ -126,9 +127,17 @@
             flex-grow: 1;
         }
 
-        #listName {
-            text-align: center;
-            margin-top: 10px;
+        #fileInput {
+            margin-top: 20px;
+        }
+
+        #importTextArea {
+            width: 100%;
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #cbd5e0;
+            border-radius: 5px;
+            font-size: 16px;
         }
     </style>
 </head>
@@ -168,7 +177,7 @@
     <textarea id="importTextArea" rows="5" cols="50" placeholder="Paste your JSON or CSV data here"></textarea>
     <button onclick="importTextData()">Import Text Data</button>
     <button onclick="exportList()">Export List</button>
-
+    <button id="themeToggle" onclick="toggleTheme()">🌙</button>
     <script>
         // Toggle item completion status
         document.getElementById('goalList').addEventListener('click', function (e) {
@@ -486,6 +495,12 @@
                 toggleButton.style.display = 'block';
             }
         }
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const themeToggle = document.getElementById('themeToggle');
+            themeToggle.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+        }
+
         function initializeApp() {
             updateListDropdown();
             getListFromURI();
@@ -526,6 +541,82 @@
 
         #addItem button {
             margin-left: 5px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            #listControls {
+                flex-direction: column;
+            }
+
+            #listControls button,
+            #listControls select {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+
+        #themeToggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        body.dark-mode {
+            background-color: #1a202c;
+            color: #e2e8f0;
+        }
+
+        body.dark-mode li {
+            background-color: #2d3748;
+            color: #e2e8f0;
+        }
+
+        body.dark-mode li.checked {
+            color: #a0aec0;
+            background-color: #4a5568;
+        }
+
+        body.dark-mode button {
+            background-color: #4a5568;
+        }
+
+        body.dark-mode button:hover {
+            background-color: #718096;
+        }
+
+        body,
+        li,
+        button {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        li::before {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            border: 2px solid #4a5568;
+            border-radius: 3px;
+            vertical-align: middle;
+            transition: all 0.3s ease;
+        }
+
+        li.checked::before {
+            content: '✓';
+            color: #ffffff;
+            background-color: #4299e1;
+            border-color: #4299e1;
+            text-align: center;
+            line-height: 20px;
         }
     </style>
 </body>
