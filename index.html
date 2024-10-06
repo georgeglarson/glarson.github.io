@@ -227,47 +227,52 @@
         }
 
         let currentListName = 'CamillesList';
+          // Save the current list to local storage
+          function getListsFromStorage() {
+              return JSON.parse(localStorage.getItem('lists')) || {};
+          }
 
-        // Save the current list to local storage
-        function saveList() {
-            try {
-                var items = document.querySelectorAll('#goalList li');
-                var list = Array.from(items).map(item => ({
-                    text: item.textContent,
-                    checked: item.classList.contains('checked')
-                }));
-                let lists = JSON.parse(localStorage.getItem('lists')) || {};
-                lists[currentListName] = list;
-                localStorage.setItem('lists', JSON.stringify(lists));
-                updateListDropdown();
-                generateExportLink();
-            } catch (error) {
-                console.error('Error saving list:', error);
-                alert('There was an error saving your list. Please try again.');
-            }
-        }
+          function saveListsToStorage(lists) {
+              localStorage.setItem('lists', JSON.stringify(lists));
+          }
 
-        // Load a list from local storage
-        function loadList(listName = 'CamillesList') {
-            let lists = JSON.parse(localStorage.getItem('lists')) || {};
-            let list = lists[listName] || [];
-            var ul = document.getElementById('goalList');
-            ul.innerHTML = '';
-            list.forEach(item => {
-                var li = document.createElement('li');
-                li.textContent = item.text;
-                if (item.checked) li.classList.add('checked');
-                ul.appendChild(li);
-            });
-            currentListName = listName;
+          function saveList() {
+              try {
+                  const items = Array.from(document.querySelectorAll('#goalList li')).map(item => ({
+                      text: item.textContent,
+                      checked: item.classList.contains('checked')
+                  }));
+                  const lists = getListsFromStorage();
+                  lists[currentListName] = items;
+                  saveListsToStorage(lists);
+                  updateListDropdown();
+                  generateExportLink();
+              } catch (error) {
+                  console.error('Error saving list:', error);
+                  alert('There was an error saving your list. Please try again.');
+              }
+          }
+        
+          function createListItem(text, checked = false) {
+              const li = document.createElement('li');
+              li.textContent = text;
+              if (checked) li.classList.add('checked');
+              return li;
+          }
 
-            // Update the title display
-            let displayTitle = listName === 'CamillesList' ? "Camille's List" : listName;
-            document.getElementById('listTitle').textContent = displayTitle;
-
-            // Hide 'add item' view when switching lists
-            toggleAddItemView(false);
-        }
+          function loadList(listName = 'CamillesList') {
+              const lists = getListsFromStorage();
+              const list = lists[listName] || [];
+              const ul = document.getElementById('goalList');
+              ul.innerHTML = '';
+              list.forEach(item => {
+                  ul.appendChild(createListItem(item.text, item.checked));
+              });
+              currentListName = listName;
+              document.getElementById('listTitle').textContent = listName === 'CamillesList' ? "Camille's List" : listName;
+              toggleAddItemView(false);
+          }
+        
 
         function createNewList() {
             document.getElementById('newListForm').style.display = 'block';
@@ -432,15 +437,10 @@
         }
 
         function processImportedData(content, format) {
-            let list;
-            if (format === 'json') {
-                list = JSON.parse(content);
-            } else {
-                list = parseCSV(content);
-            }
-            // Process the list and update the UI
+            const list = format === 'json' ? JSON.parse(content) : parseCSV(content);
             updateListWithImportedData(list);
         }
+
         function parseCSV(content) {
             const lines = content.split('\n');
             return lines.map(line => {
@@ -452,30 +452,27 @@
             }).filter(item => item.text !== '');
         }
 
-
         function updateListWithImportedData(list) {
             const ul = document.getElementById('goalList');
             ul.innerHTML = '';
             list.forEach(item => {
-                const li = document.createElement('li');
-                li.textContent = item.text;
-                if (item.checked) li.classList.add('checked');
-                ul.appendChild(li);
+                ul.appendChild(createListItem(item.text, item.checked));
             });
             saveList();
         }
 
-        function exportList() {
-            const items = document.querySelectorAll('#goalList li');
-            const list = Array.from(items).map(item => ({
+        function getListData() {
+            return Array.from(document.querySelectorAll('#goalList li')).map(item => ({
                 text: item.textContent,
                 checked: item.classList.contains('checked')
             }));
+        }
 
+        function exportList() {
+            const list = getListData();
             const content = JSON.stringify(list, null, 2);
             const blob = new Blob([content], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
-
             const a = document.createElement('a');
             a.href = url;
             a.download = `${currentListName}.json`;
@@ -486,11 +483,7 @@
         }
 
         function generateExportLink() {
-            const items = document.querySelectorAll('#goalList li');
-            const list = Array.from(items).map(item => ({
-                text: item.textContent,
-                checked: item.classList.contains('checked')
-            }));
+            const list = getListData();
             const encodedList = encodeURIComponent(JSON.stringify(list));
             const encodedListName = encodeURIComponent(currentListName);
             const url = `${window.location.origin}${window.location.pathname}?name=${encodedListName}&list=${encodedList}`;
