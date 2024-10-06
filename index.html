@@ -171,12 +171,15 @@
         <button onclick="createNewList()">New List</button>
         <button onclick="renameList()">Rename List</button>
         <button id="deleteListButton" onclick="deleteList()">Delete List</button>
+        <button onclick="toggleImportExportControls()">Import/Export</button>
     </div>
-    <input type="file" id="fileInput" accept=".json,.csv" aria-label="Choose file to import">
-    <button onclick="importFile()">Import File</button>
-    <textarea id="importTextArea" rows="5" cols="50" placeholder="Paste your JSON or CSV data here"></textarea>
-    <button onclick="importTextData()">Import Text Data</button>
-    <button onclick="exportList()">Export List</button>
+    <div id="importExportControls">
+        <input type="file" id="fileInput" accept=".json,.csv" aria-label="Choose file to import">
+        <button onclick="importFile()">Import File</button>
+        <textarea id="importTextArea" rows="5" cols="50" placeholder="Paste your JSON or CSV data here"></textarea>
+        <button onclick="importTextData()">Import Text Data</button>
+        <button onclick="exportList()">Export List</button>
+    </div>
     <button id="themeToggle" onclick="toggleTheme()">🌙</button>
     <script>
         // Toggle item completion status
@@ -292,7 +295,6 @@
                 }
             });
         }
-
 
         function submitRenameList() {
             let newName = document.getElementById('newListNameInput').value.trim();
@@ -481,6 +483,10 @@
             window.history.pushState({}, '', url);
             console.log('Copy this link:', url);
         }
+        function toggleImportExportControls() {
+            const controls = document.getElementById('importExportControls');
+            controls.classList.toggle('visible');
+        }
 
         function toggleAddItemView(show) {
             var addItemDiv = document.getElementById('addItem');
@@ -617,6 +623,15 @@
             border-color: #4299e1;
             text-align: center;
             line-height: 20px;
+        }
+
+        #importExportControls {
+            display: none;
+            transition: all 0.3s ease;
+        }
+
+        #importExportControls.visible {
+            display: block;
         }
     </style>
 </body>
