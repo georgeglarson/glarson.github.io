@@ -65,6 +65,10 @@ const tourSteps = [
             const tooltip = document.createElement('div');
             tooltip.className = 'tour-tooltip';
 
+            const arrowSpan = document.createElement('span');
+            arrowSpan.className = 'tour-arrow';
+            tooltip.appendChild(arrowSpan);
+
             const textContent = document.createElement('p');
             textContent.textContent = content;
             textContent.className = 'tour-content';
@@ -94,7 +98,6 @@ const tourSteps = [
 
             tooltip.appendChild(buttonContainer);
     
-            // Position the tooltip next to the target element
             document.body.appendChild(tooltip);
             const targetRect = targetElement.getBoundingClientRect();
             const tooltipRect = tooltip.getBoundingClientRect();
@@ -103,6 +106,10 @@ const tourSteps = [
             tooltip.style.position = 'absolute';
             tooltip.style.top = `${top}px`;
             tooltip.style.left = `${left}px`;
+
+            // Set the arrow direction
+            const arrowDirection = getArrowDirection(targetRect, tooltipRect);
+            arrowSpan.textContent = arrowDirection;
         }, 500);
     }
     function calculateTooltipPosition(targetRect, tooltipRect) {
@@ -148,4 +155,17 @@ function showFinalStep() {
     finalTooltip.style.top = '50%';
     finalTooltip.style.left = '50%';
     finalTooltip.style.transform = 'translate(-50%, -50%)';
+}
+
+function getArrowDirection(targetRect, tooltipRect) {
+    const centerX = targetRect.left + targetRect.width / 2;
+    const centerY = targetRect.top + targetRect.height / 2;
+    const tooltipCenterX = tooltipRect.left + tooltipRect.width / 2;
+    const tooltipCenterY = tooltipRect.top + tooltipRect.height / 2;
+
+    if (Math.abs(centerX - tooltipCenterX) > Math.abs(centerY - tooltipCenterY)) {
+        return centerX > tooltipCenterX ? '➡️' : '⬅️';
+    } else {
+        return centerY > tooltipCenterY ? '⬇️' : '⬆️';
+    }
 }
