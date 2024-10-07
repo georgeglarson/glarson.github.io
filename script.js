@@ -1,4 +1,3 @@
-
 function saveAsPreset() {
     document.getElementById('savePresetForm').style.display = 'block';
     let input = document.getElementById('presetNameInput');
@@ -9,7 +8,7 @@ function submitSavePreset() {
     const presetName = document.getElementById('presetNameInput').value.trim();
     if (presetName) {
         const lists = getListsFromStorage();
-        lists[`🔁 ${presetName}`] = lists[currentListName];
+        lists[`🔁 ${presetName}`] = { items: getListData(), isPreset: true };
         saveListsToStorage(lists);
         updateListDropdown();
         cancelSavePreset();
@@ -23,10 +22,10 @@ function cancelSavePreset() {
         const lists = getListsFromStorage();
         const preset = lists[presetName];
         if (preset && preset.items) {
-            updateListWithImportedData(preset.items);
+            updateListWithImportedData(preset.items, true);
             currentListName = presetName;
             document.getElementById('listTitle').textContent = `${presetName.substring(2)} (preset)`;
-            saveList(); // This will ensure the loaded preset is saved in the current format
+            saveList();
         }
     }
 }
@@ -54,7 +53,7 @@ function clearCompleted() {
     checkedItems.forEach(item => item.remove());
     saveList();
 }
-let currentListName = 'CamillesList';
+let currentListName = "Camille's List";
 function getListsFromStorage() {
     return JSON.parse(localStorage.getItem('lists')) || {};
 }
@@ -65,13 +64,9 @@ function saveListsToStorage(lists) {
 
 function saveList() {
     try {
-        const items = Array.from(document.querySelectorAll('#goalList li')).map(item => ({
-            text: item.textContent,
-            checked: item.classList.contains('checked')
-        }));
         const lists = getListsFromStorage();
         lists[currentListName] = {
-            items: items,
+            items: getListData(),
             isPreset: currentListName.startsWith('🔁')
         };
         saveListsToStorage(lists);
@@ -81,110 +76,117 @@ function saveList() {
         console.error('Error saving list:', error);
         alert('There was an error saving your list. Please try again.');
     }
-}function createListItem(text, checked = false) {
+} function createListItem(text, checked = false) {
     const li = document.createElement('li');
     li.textContent = text;
     if (checked) li.classList.add('checked');
     return li;
 }
-function loadList(listName = 'CamillesList') {
-    const lists = getListsFromStorage();
+function loadList(listName = "Camille's List") {
+    let lists = getListsFromStorage();
+    if (!lists[listName]) {
+        lists[listName] = { items: [] };
+        saveListsToStorage(lists);
+    }
     const listData = lists[listName];
     const ul = document.getElementById('goalList');
     ul.innerHTML = '';
 
-    if (listData && Array.isArray(listData.items)) {
+    if (Array.isArray(listData.items)) {
         listData.items.forEach(item => {
             ul.appendChild(createListItem(item.text, item.checked));
         });
-    } else if (Array.isArray(listData)) {
-        listData.forEach(item => {
-            ul.appendChild(createListItem(item.text, item.checked));
-        });
     } else {
-        console.warn(`List "${listName}" not found or in unexpected format. Creating empty list.`);
+        console.warn(`List "${listName}" in unexpected format. Resetting to empty list.`);
+        lists[listName] = { items: [] };
+        saveListsToStorage(lists);
     }
 
     currentListName = listName;
     const displayName = listName.startsWith('🔁') ? `${listName.substring(2)} (preset)` : listName;
-    document.getElementById('listTitle').textContent = displayName === 'CamillesList' ? "Camille's List" : displayName;
+    const listTitle = document.getElementById('listTitle');
+    listTitle.textContent = displayName;
+
+    // Apply fancy styling for "Camille's List"
+    if (listName === "Camille's List") {
+        listTitle.classList.add('camilles-list');
+    } else {
+        listTitle.classList.remove('camilles-list');
+    }
     toggleAddItemView(false);
 }
+function handleListNameChange(action) {
+    const formId = action === 'create' ? 'newListForm' : 'renameListForm';
+    const inputId = action === 'create' ? 'newListName' : 'newListNameInput';
+
+    document.getElementById(formId).style.display = 'block';
+    let input = document.getElementById(inputId);
+    input.value = action === 'rename' ? currentListName : '';
+    input.focus();
+}
+
 function createNewList() {
-    document.getElementById('newListForm').style.display = 'block';
-    let input = document.getElementById('newListName');
-    input.focus();
-    input.addEventListener('keyup', function (event) {
-        if (event.key === 'Enter') {
-            submitNewList();
-        }
-    });
+    handleListNameChange('create');
 }
 
-function submitNewList() {
-    let listName = document.getElementById('newListName').value.trim();
-    if (listName) {
-        currentListName = listName;
-        document.getElementById('goalList').innerHTML = '';
-        saveList();
-        loadList(listName);
-        cancelNewList();
-        toggleAddItemView(true);
-    }
-}
-
-function cancelNewList() {
-    document.getElementById('newListForm').style.display = 'none';
-    document.getElementById('newListName').value = '';
-}
 function renameList() {
-    document.getElementById('renameListForm').style.display = 'block';
-    let input = document.getElementById('newListNameInput');
-    input.value = currentListName;
-    input.focus();
-    input.addEventListener('keyup', function (event) {
-        if (event.key === 'Enter') {
-            submitRenameList();
-        }
-    });
+    handleListNameChange('rename');
 }
 
-function submitRenameList() {
-    let newName = document.getElementById('newListNameInput').value.trim();
-    if (newName && newName !== currentListName) {
-        let lists = JSON.parse(localStorage.getItem('lists')) || {};
-        if (lists[newName]) {
+function submitListNameChange(action) {
+    const inputId = action === 'create' ? 'newListName' : 'newListNameInput';
+    let listName = document.getElementById(inputId).value.trim();
+
+    if (listName) {
+        if (action === 'rename' && listName === currentListName) return;
+
+        let lists = getListsFromStorage();
+        if (lists[listName]) {
             alert('A list with this name already exists. Please choose a different name.');
             return;
         }
-        lists[newName] = lists[currentListName];
-        delete lists[currentListName];
-        localStorage.setItem('lists', JSON.stringify(lists));
-        currentListName = newName;
-        let displayTitle = newName === 'CamillesList' ? "Camille's List" : newName;
-        document.getElementById('listTitle').textContent = displayTitle;
+
+        if (action === 'rename') {
+            lists[listName] = lists[currentListName];
+            delete lists[currentListName];
+        } else {
+            lists[listName] = { items: [] };
+        }
+
+        saveListsToStorage(lists);
+        currentListName = listName;
+        document.getElementById('listTitle').textContent = listName;
+        if (listName === "Camille's List") {
+            document.getElementById('listTitle').classList.add('camilles-list');
+        } else {
+            document.getElementById('listTitle').classList.remove('camilles-list');
+        }
         updateListDropdown();
-        cancelRenameList();
+        loadList(listName);
+
+        if (action === 'create') {
+            toggleAddItemView(true);
+        }
+
+        document.getElementById(action === 'create' ? 'newListForm' : 'renameListForm').style.display = 'none';
     }
 }
 
-function cancelRenameList() {
-    document.getElementById('renameListForm').style.display = 'none';
+function submitNewList() {
+    submitListNameChange('create');
 }
+
+function submitRenameList() {
+    submitListNameChange('rename');
+}
+
+function cancelListNameChange(formId) {
+    document.getElementById(formId).style.display = 'none';
+}
+
 function switchList() {
     let listName = document.getElementById('listSelect').value;
-    if (listName.startsWith('🔁')) {
-        const presetName = listName.substring(2);
-        const lists = getListsFromStorage();
-        const preset = lists[listName];
-        if (preset) {
-            updateListWithImportedData(preset);
-            document.getElementById('listTitle').textContent = `${presetName} (preset)`;
-            currentListName = listName;
-        }
-    } else {
-        loadList(listName);
-    }
+    loadList(listName);
 }
 
 function deleteList() {
@@ -242,7 +244,6 @@ function getListFromURI() {
         }
     }
 }
-
 function generateExportLink() {
     const list = getListData();
     const encodedList = encodeURIComponent(JSON.stringify(list));
@@ -260,7 +261,7 @@ function doneAddingItems() {
 
 function importFile() {
     const file = document.getElementById('fileInput').files[0];
-    const reader = new FileReader();    reader.onload = function (e) {
+    const reader = new FileReader(); reader.onload = function (e) {
         const content = e.target.result;
         processImportedData(content, file.name.split('.').pop());
     };
@@ -299,47 +300,23 @@ function parseCSV(content) {
 function updateListWithImportedData(list, isPreset) {
     const ul = document.getElementById('goalList');
     ul.innerHTML = '';
-    
+
     const items = Array.isArray(list) ? list : (list && Array.isArray(list.items) ? list.items : []);
-    
+
     items.forEach(item => {
         ul.appendChild(createListItem(item.text, item.checked));
     });
 
-    if (isPreset) {
+    if (isPreset && !currentListName.startsWith('🔁')) {
         currentListName = `🔁 ${currentListName}`;
     }
     saveList();
     updateListDropdown();
-}function getListData() {
+} function getListData() {
     return Array.from(document.querySelectorAll('#goalList li')).map(item => ({
         text: item.textContent,
         checked: item.classList.contains('checked')
     }));
-}
-function exportList() {
-    const list = getListData();
-    const content = JSON.stringify({
-        items: list,
-        isPreset: currentListName.startsWith('🔁')
-    }, null, 2);
-    const blob = new Blob([content], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${currentListName}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-}
-function generateExportLink() {
-    const list = getListData();
-    const encodedList = encodeURIComponent(JSON.stringify(list));
-    const encodedListName = encodeURIComponent(currentListName);
-    const url = `${window.location.origin}${window.location.pathname}?name=${encodedListName}&list=${encodedList}`;
-    window.history.pushState({}, '', url);
-    console.log('Copy this link:', url);
 }
 function toggleImportExportControls() {
     const controls = document.getElementById('importExportControls');
@@ -389,6 +366,11 @@ function openTab(evt, tabName) {
 }
 function initializeApp() {
     loadThemePreference();
+    const lists = getListsFromStorage();
+    if (!lists["Camille's List"]) {
+        lists["Camille's List"] = { items: [] };
+        saveListsToStorage(lists);
+    }
     updateListDropdown();
     getListFromURI();
     loadList(currentListName);
@@ -400,17 +382,20 @@ function initializeApp() {
 }
 window.onload = initializeApp;
 
-function handleEnterKey(inputElement, submitFunction) {
-    inputElement.addEventListener('keyup', function (event) {
+// Consolidated function for handling Enter key press
+function handleEnterKey(inputId, submitFunction) {
+    document.getElementById(inputId).addEventListener('keyup', function (event) {
         if (event.key === 'Enter') {
             submitFunction();
         }
     });
 }
 
-handleEnterKey(document.getElementById('newListName'), submitNewList);
-handleEnterKey(document.getElementById('newListNameInput'), submitRenameList);
-handleEnterKey(document.getElementById('newItem'), addNewItem);
+// Use the consolidated function
+handleEnterKey('newListName', submitNewList);
+handleEnterKey('newListNameInput', submitRenameList);
+handleEnterKey('newItem', addNewItem);
+handleEnterKey('presetNameInput', submitSavePreset);
 
 const APP_VERSION = '5.2.4';
 

@@ -145,14 +145,38 @@ li.checked::before {
 #importExportControls.visible {
     display: block;
 }
+  :root {
+  --bg-color: #f0f4f8;
+  --text-color: #2c5282;
+  --item-bg: #ffffff;
+  --item-checked-bg: #e2e8f0;
+  --button-bg: #4299e1;
+  --button-hover-bg: #3182ce;
+}
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
-    background-color: #f0f4f8;
-    color: #2c5282;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode styles */
+body.dark-mode {
+  --bg-color: #1a202c;
+  --text-color: #e2e8f0;
+  --item-bg: #2d3748;
+  --item-checked-bg: #4a5568;
+  --button-bg: #4a5568;
+  --button-hover-bg: #718096;
+}
+
+/* Consolidated transitions */
+body, li, button, .tab-button {
+  transition: all 0.3s ease;
 }
 
 h1 {
@@ -167,14 +191,14 @@ ul {
     padding: 0;
 }
 
+/* Optimized and consolidated list item styles */
 li {
     cursor: pointer;
     padding: 15px;
     margin-bottom: 10px;
     border-radius: 5px;
-    background-color: #ffffff;
+    background-color: var(--item-bg);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
     animation: fadeIn 0.3s ease;
 }
 
@@ -198,7 +222,7 @@ li:hover {
 li.checked {
     text-decoration: line-through;
     color: #718096;
-    background-color: #e2e8f0;
+    background-color: var(--item-checked-bg);
 }
 
 li::before {
@@ -324,6 +348,15 @@ button:active {
     transform: scale(1.1);
 }
 
+/* Fix for incomplete keyframe animation */
+@keyframes wiggle {
+  0%, 100% { transform: translateX(0); }
+  10%, 90% { transform: translateX(-11px); }
+  20%, 80% { transform: translateX(2px); }
+  30%, 50%, 70% { transform: translateX(-4px); }
+  40%, 60% { transform: translateX(4px); }
+}
+
 .tour-final-tooltip {
     background-color: #98FB98;
     border: 3px solid #4CAF50;
@@ -355,28 +388,10 @@ button:active {
     animation: wiggle 2.5s infinite;
 }
 
-@keyframes wiggle{
-    10%, 90% {
-      transform: translatex(-11px);
-    }
-    
-    20%, 80% {
-      transform: translatex(2px);
-    }
-  
-    30%, 50%, 70% {
-      transform: translatex(-4px);
-    }
-  
-    40%, 60% {
-      transform: trans
-}
-
-h1.wiggle {
-    display: inline-block;
-    animation: wiggle 2.5s infinite;
-}
-
-h1.wiggle:hover {
-    animation: none;
+.camilles-list {
+    font-family: 'Brush Script MT', cursive;
+    font-size: 5.5em;
+    color: #ff69b4;
+    text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
+    letter-spacing: 2px;
 }
