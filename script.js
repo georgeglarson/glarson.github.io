@@ -412,7 +412,7 @@ handleEnterKey(document.getElementById('newListName'), submitNewList);
 handleEnterKey(document.getElementById('newListNameInput'), submitRenameList);
 handleEnterKey(document.getElementById('newItem'), addNewItem);
 
-const APP_VERSION = '5.2.2';
+const APP_VERSION = '5.2.4';
 
 document.addEventListener('DOMContentLoaded', () => {
     startTour();

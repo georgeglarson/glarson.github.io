@@ -42,16 +42,19 @@ const tourSteps = [
           console.log('Tour aborted');
       }
   }
-
-  function endTour() {
-      alert('Tour completed! Enjoy using Camille\'s List!');
+    function endTour() {
+      const finalTooltip = document.querySelector('.tour-final-tooltip');
+      if (finalTooltip) {
+          finalTooltip.remove();
+      }
       tourActive = false;
       removeTourEscapeListeners();
   }
+  
     function showTourStep(step) {
         if (!tourActive) return;
         if (step >= tourSteps.length) {
-            endTour();
+            showFinalStep();
             return;
         }
 
@@ -69,7 +72,7 @@ const tourSteps = [
 
             const buttonContainer = document.createElement('div');
             buttonContainer.className = 'tour-buttons';
-        
+    
             const nextButton = document.createElement('button');
             nextButton.textContent = 'Next';
             nextButton.className = 'tour-button';
@@ -90,19 +93,18 @@ const tourSteps = [
             }
 
             tooltip.appendChild(buttonContainer);
-        
+    
             // Position the tooltip next to the target element
             document.body.appendChild(tooltip);
             const targetRect = targetElement.getBoundingClientRect();
             const tooltipRect = tooltip.getBoundingClientRect();
             const { top, left } = calculateTooltipPosition(targetRect, tooltipRect);
-        
+    
             tooltip.style.position = 'absolute';
             tooltip.style.top = `${top}px`;
             tooltip.style.left = `${left}px`;
         }, 500);
     }
-
     function calculateTooltipPosition(targetRect, tooltipRect) {
         const margin = 10;
         let top = targetRect.bottom + window.scrollY + margin;
@@ -118,6 +120,32 @@ const tourSteps = [
 
         return { top, left };
     }
-function endTour() {
-    alert('Tour completed! Enjoy using Camille\'s List!');
+
+function showFinalStep() {
+    const finalTooltip = document.createElement('div');
+    finalTooltip.className = 'tour-final-tooltip';
+
+    const textContent = document.createElement('p');
+    textContent.textContent = 'Congratulations! You\'ve completed the tour of Camille\'s List.';
+    textContent.className = 'tour-content';
+    finalTooltip.appendChild(textContent);
+
+    const buttonContainer = document.createElement('div');
+    buttonContainer.className = 'tour-buttons';
+
+    const finishButton = document.createElement('button');
+    finishButton.textContent = 'Finish Tour';
+    finishButton.className = 'tour-button';
+    finishButton.onclick = endTour;
+    buttonContainer.appendChild(finishButton);
+
+    finalTooltip.appendChild(buttonContainer);
+
+    document.body.appendChild(finalTooltip);
+
+    // Center the tooltip
+    finalTooltip.style.position = 'fixed';
+    finalTooltip.style.top = '50%';
+    finalTooltip.style.left = '50%';
+    finalTooltip.style.transform = 'translate(-50%, -50%)';
 }
