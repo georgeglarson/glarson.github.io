@@ -352,7 +352,7 @@ button:active {
 .tour-arrow {
     position: absolute;
     font-size: 54px;
-    #animation: wiggle 2.5s infinite;
+    animation: wiggle 2.5s infinite;
 }
 
 @keyframes wiggle{
