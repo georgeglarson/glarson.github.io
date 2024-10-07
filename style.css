@@ -338,27 +338,50 @@ button:active {
     color: #333;
 }
 
+.tour-arrow-top {
+    top: -40%;
+    left: 1%;
+    transform: rotate(-16deg);
+}
+
+.tour-arrow-bottom {
+    top: 95%;
+    left: 55%;
+}
+
 .tour-arrow {
     position: absolute;
     font-size: 54px;
-    top: -50px;
-    left: 10px;
-    animation: wiggle 2.5s infinite;
+    #animation: wiggle 2.5s infinite;
 }
 
 @keyframes wiggle {
-    0% { transform: rotate(0deg); }
-   80% { transform: rotate(0deg); }
-   85% { transform: rotate(5deg); }
-   95% { transform: rotate(-5deg); }
-  100% { transform: rotate(0deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    80% {
+        transform: rotate(0deg);
+    }
+
+    85% {
+        transform: rotate(5deg);
+    }
+
+    95% {
+        transform: rotate(-5deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
 }
 
 h1.wiggle {
-  display: inline-block;
-  animation: wiggle 2.5s infinite;
+    display: inline-block;
+    animation: wiggle 2.5s infinite;
 }
 
 h1.wiggle:hover {
-  animation: none;
+    animation: none;
 }
