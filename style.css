@@ -289,7 +289,7 @@ button:active {
     border-radius: 15px;
     /* Rounded corners */
     padding: 15px;
-    box-shadow: 5px 5px 0px #b8b8b8;
+    box-shadow: 5px 5px 0px #201e1e;
     /* Playful offset shadow */
     z-index: 1000;
     color: #333;
@@ -326,7 +326,6 @@ button:active {
 
 .tour-final-tooltip {
     background-color: #98FB98;
-    /* Light green */
     border: 3px solid #4CAF50;
     border-radius: 20px;
     padding: 25px;
@@ -344,4 +343,22 @@ button:active {
     font-size: 54px;
     top: -50px;
     left: 10px;
+    animation: wiggle 2.5s infinite;
+}
+
+@keyframes wiggle {
+    0% { transform: rotate(0deg); }
+   80% { transform: rotate(0deg); }
+   85% { transform: rotate(5deg); }
+   95% { transform: rotate(-5deg); }
+  100% { transform: rotate(0deg); }
+}
+
+h1.wiggle {
+  display: inline-block;
+  animation: wiggle 2.5s infinite;
+}
+
+h1.wiggle:hover {
+  animation: none;
 }
