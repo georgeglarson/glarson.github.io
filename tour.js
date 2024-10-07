@@ -116,18 +116,20 @@ const tourSteps = [
         const margin = 10;
         let top = targetRect.bottom + window.scrollY + margin;
         let left = targetRect.left + window.scrollX;
+        let arrowPosition = 'top';
 
         if (left + tooltipRect.width > window.innerWidth) {
             left = window.innerWidth - tooltipRect.width - margin;
         }
 
+        // Check if the tooltip would go off the bottom of the screen
         if (top + tooltipRect.height > window.innerHeight + window.scrollY) {
             top = targetRect.top + window.scrollY - tooltipRect.height - margin;
+            arrowPosition = 'bottom';
         }
 
-        return { top, left };
+        return { top, left, arrowPosition };
     }
-
 function showFinalStep() {
     const finalTooltip = document.createElement('div');
     finalTooltip.className = 'tour-final-tooltip';
