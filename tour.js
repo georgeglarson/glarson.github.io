@@ -61,6 +61,11 @@ const tourSteps = [
         const { element, content } = tourSteps[step];
         const targetElement = document.querySelector(element);
 
+        targetElement.addEventListener('click', function onTargetClick() {
+            targetElement.removeEventListener('click', onTargetClick);
+            document.querySelector('.tour-tooltip .next-button').click();
+        });
+
         setTimeout(() => {
             const tooltip = document.createElement('div');
             tooltip.className = 'tour-tooltip';
@@ -79,7 +84,7 @@ const tourSteps = [
     
             const nextButton = document.createElement('button');
             nextButton.textContent = 'Next';
-            nextButton.className = 'tour-button';
+            nextButton.className = 'tour-button next-button';
             nextButton.onclick = () => {
                 tooltip.remove();
                 showTourStep(step + 1);
