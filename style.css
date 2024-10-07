@@ -355,26 +355,21 @@ button:active {
     #animation: wiggle 2.5s infinite;
 }
 
-@keyframes wiggle {
-    0% {
-        transform: rotate(0deg);
+@keyframes wiggle{
+    10%, 90% {
+      transform: translate3d(-1px, 0, 0);
     }
-
-    80% {
-        transform: rotate(0deg);
+    
+    20%, 80% {
+      transform: translate3d(2px, 0, 0);
     }
-
-    85% {
-        transform: rotate(5deg);
+  
+    30%, 50%, 70% {
+      transform: translate3d(-4px, 0, 0);
     }
-
-    95% {
-        transform: rotate(-5deg);
-    }
-
-    100% {
-        transform: rotate(0deg);
-    }
+  
+    40%, 60% {
+      transform: trans
 }
 
 h1.wiggle {
