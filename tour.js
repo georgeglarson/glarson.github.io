@@ -16,18 +16,21 @@ function startTour() {
 }
 
 function addTourEscapeListeners() {
-    document.addEventListener('keydown', handleEscapeKey);
+    document.addEventListener('keydown', handleTourKeyPress);
     window.addEventListener('popstate', abortTour);
 }
 
 function removeTourEscapeListeners() {
-    document.removeEventListener('keydown', handleEscapeKey);
+    document.removeEventListener('keydown', handleTourKeyPress);
     window.removeEventListener('popstate', abortTour);
 }
 
-function handleEscapeKey(event) {
+function handleTourKeyPress(event) {
     if (event.key === 'Escape') {
         abortTour();
+    } else if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        progressTour();
     }
 }
 
@@ -197,3 +200,17 @@ function getArrowDirection(targetRect, tooltipRect) {
     }
 }
 
+
+function progressTour() {
+    if (tourActive) {
+        const nextButton = document.querySelector('.tour-tooltip .next-button');
+        if (nextButton) {
+            nextButton.click();
+        } else {
+            const finishButton = document.querySelector('.tour-final-tooltip .tour-button');
+            if (finishButton) {
+                finishButton.click();
+            }
+        }
+    }
+}
