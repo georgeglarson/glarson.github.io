@@ -339,7 +339,7 @@ button:active {
 }
 
 .tour-arrow-top {
-    top: -40%;
+    top: -45%;
     left: 1%;
     transform: rotate(-16deg);
 }
@@ -357,15 +357,15 @@ button:active {
 
 @keyframes wiggle{
     10%, 90% {
-      transform: translate3d(-1px, 0, 0);
+      transform: translatex(-11px);
     }
     
     20%, 80% {
-      transform: translate3d(2px, 0, 0);
+      transform: translatex(2px);
     }
   
     30%, 50%, 70% {
-      transform: translate3d(-4px, 0, 0);
+      transform: translatex(-4px);
     }
   
     40%, 60% {
