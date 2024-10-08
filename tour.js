@@ -18,12 +18,131 @@ const arrowDirections = {
 };
 
 function startTour() {
-    console.log('Tour started');
+    console.log('Starting tour');
     tourState.active = true;
     tourState.currentStep = 0;
-    document.getElementById('startTourButton').style.display = 'none'; // Hide the button
+    document.getElementById('startTourButton').style.display = 'none';
     showTourStep(tourState.currentStep);
+}
+
+function showTourStep(step) {
+    console.log(`Showing step ${step}`);
+    if (step >= tourSteps.length) {
+        console.log('Tour completed');
+        endTour();
+        return;
+    }
+
+    removeAllHighlights();
+
+    const { element, content } = tourSteps[step];
+    console.log(`Step ${step}: ${element} - ${content}`);
+    const targetElement = document.querySelector(element);
+
+    if (!targetElement) {
+        console.error(`Element not found: ${element}`);
+        return;
+    }
+
+    const overlay = createOverlay(content, step);
+    document.body.appendChild(overlay);
+
+    highlightElement(targetElement, step);
+    
+    tourState.currentStep = step;
+    
     addTourEscapeListeners();
+}
+
+function createOverlay(content, step) {
+    const overlay = document.createElement('div');
+    overlay.className = 'tour-overlay';
+
+    overlay.innerHTML = `
+        <div class="tour-content">
+            <p>${content}</p>
+            <div class="tour-buttons">
+                ${step > 0 ? '<button class="tour-button prev-button">Previous</button>' : ''}
+                <button class="tour-button next-button">${step < tourSteps.length - 1 ? 'Next' : 'Finish'}</button>
+            </div>
+        </div>
+    `;
+
+    if (step === 3) { // Theme toggle step
+        const tourContent = overlay.querySelector('.tour-content');
+        tourContent.style.position = 'absolute';
+        tourContent.style.bottom = '80px'; // Increase bottom margin
+        tourContent.style.right = '20px';
+        tourContent.style.left = 'auto';
+        tourContent.style.maxWidth = '250px'; // Limit width to avoid covering the button
+    }
+
+    overlay.querySelector('.next-button').addEventListener('click', progressTour);
+
+    if (step > 0) {
+        overlay.querySelector('.prev-button').addEventListener('click', () => {
+            removeOverlay();
+            showTourStep(tourState.currentStep - 1);
+        });
+    }
+
+    return overlay;
+}
+
+function highlightElement(element, step) {
+    if (step === 3) { // Theme toggle step
+        // Create a fixed position highlight that doesn't move the original element
+        const rect = element.getBoundingClientRect();
+        const highlightEl = document.createElement('div');
+        highlightEl.className = 'tour-highlight-fixed';
+        highlightEl.style.top = `${rect.top}px`;
+        highlightEl.style.left = `${rect.left}px`;
+        highlightEl.style.width = `${rect.width}px`;
+        highlightEl.style.height = `${rect.height}px`;
+        document.body.appendChild(highlightEl);
+        
+        // Add click event to the highlight element
+        highlightEl.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            element.click(); // Trigger the original button's click
+            progressTour();
+        });
+    } else {
+        // For other elements, use the original highlighting method
+        element.classList.add('tour-highlight');
+        element.style.position = 'relative';
+        element.style.zIndex = '1002';
+    }
+
+    element.addEventListener('click', progressTour);
+}
+
+function removeAllHighlights() {
+    document.querySelectorAll('.tour-highlight').forEach(el => {
+        el.classList.remove('tour-highlight');
+        el.style.position = '';
+        el.style.zIndex = '';
+        el.removeEventListener('click', progressTour);
+    });
+    document.querySelectorAll('.tour-highlight-fixed').forEach(el => {
+        el.removeEventListener('click', progressTour);
+        el.remove();
+    });
+}
+
+function endTour() {
+    console.log('Ending tour');
+    tourState.active = false;
+    removeAllHighlights();
+    localStorage.setItem('tourCompleted', 'true');
+}
+
+function removeTooltip(selector) {
+    const tooltip = document.querySelector(selector);
+    if (tooltip) {
+        tooltip.remove();
+    }
 }
 
 function addTourEscapeListeners() {
@@ -55,207 +174,14 @@ function abortTour() {
     }
 }
 
-function endTour() {
-    removeTooltip('.tour-final-tooltip');
-    tourState.active = false;
-    removeTourEscapeListeners();
-    localStorage.setItem('tourCompleted', 'true');
-    document.getElementById('startTourButton').style.display = 'block'; // Show the button
-}
-
-function removeTooltip(selector) {
-    const tooltip = document.querySelector(selector);
-    if (tooltip) {
-        tooltip.remove();
-    }
-}
-
-function showTourStep(step) {
-    if (!tourState.active) return;
-    if (step >= tourSteps.length) {
-        showFinalStep();
-        return;
-    }
-
-    const { element, content } = tourSteps[step];
-    const targetElement = document.querySelector(element);
-    if (!targetElement) return;
-
-    const isDarkModeStep = element === '#themeToggle';
-    const initialTheme = isDarkModeStep ? document.body.classList.contains('dark-mode') : null;
-
-    targetElement.addEventListener('click', function onTargetClick() {
-        targetElement.removeEventListener('click', onTargetClick);
-
-        if (isDarkModeStep) {
-            setTimeout(() => {
-                if (initialTheme !== document.body.classList.contains('dark-mode')) {
-                    document.querySelector('#themeToggle').click();
-                }
-            }, 1000);
-        }
-
-        progressTour();
-    });
-
-    setTimeout(() => {
-        const tooltip = createTooltip(content, step > 0);
-        document.body.appendChild(tooltip);
-
-        const targetRect = targetElement.getBoundingClientRect();
-        const tooltipRect = tooltip.getBoundingClientRect();
-        const { top, left, arrowPosition } = calculateTooltipPosition(targetRect, tooltipRect, step);
-
-        tooltip.style.position = 'fixed'; // Change to fixed positioning
-        tooltip.style.top = `${top}px`;
-        tooltip.style.left = `${left}px`;
-
-        const arrowSpan = tooltip.querySelector('.tour-arrow');
-        arrowSpan.className = `tour-arrow tour-arrow-${arrowPosition}`;
-        arrowSpan.textContent = getArrowDirection(arrowPosition);
-
-        console.log('Step:', step);
-        console.log('Target rect:', targetRect);
-        console.log('Tooltip rect:', tooltipRect);
-        console.log('Calculated position:', { top, left, arrowPosition });
-    }, 500);
-}
-
-function createTooltip(content, showPrevButton) {
-    const tooltip = document.createElement('div');
-    tooltip.className = 'tour-tooltip';
-
-    tooltip.innerHTML = `
-        <span class="tour-arrow"></span>
-        <p class="tour-content">${content}</p>
-        <div class="tour-buttons">
-            <button class="tour-button next-button">Next</button>
-            ${showPrevButton ? '<button class="tour-button prev-button">Previous</button>' : ''}
-        </div>
-    `;
-
-    tooltip.querySelector('.next-button').onclick = () => {
-        tooltip.remove();
-        showTourStep(++tourState.currentStep);
-    };
-
-    if (showPrevButton) {
-        tooltip.querySelector('.prev-button').onclick = () => {
-            tooltip.remove();
-            showTourStep(--tourState.currentStep);
-        };
-    }
-
-    return tooltip;
-}
-
-function calculateTooltipPosition(targetRect, tooltipRect, step) {
-    const margin = 10;
-    const screenWidth = window.innerWidth;
-    const screenHeight = window.innerHeight;
-    
-    let top, left, arrowPosition;
-
-    // Check if it's a mobile device
-    const isMobile = window.innerWidth <= 600;
-
-    if (isMobile) {
-        // Mobile positioning logic
-        if (step === 2) { // List select step
-            top = targetRect.bottom + margin;
-            left = (screenWidth - tooltipRect.width) / 2;
-            arrowPosition = 'top';
-        } else if (step === 3) { // Theme toggle step
-            top = targetRect.top - tooltipRect.height - margin;
-            left = (screenWidth - tooltipRect.width) / 2;
-            arrowPosition = 'bottom';
-        } else {
-            // Default mobile positioning
-            top = targetRect.bottom + margin;
-            left = (screenWidth - tooltipRect.width) / 2;
-            arrowPosition = 'top';
-        }
-    } else {
-        // Desktop positioning logic
-        if (step === 3) { // Theme toggle step
-            left = targetRect.left - tooltipRect.width - margin;
-            top = targetRect.top;
-            arrowPosition = 'right';
-
-            if (left < margin) {
-                left = targetRect.right + margin;
-                arrowPosition = 'left';
-            }
-        } else {
-            // Default desktop positioning
-            if (targetRect.bottom + tooltipRect.height + margin <= screenHeight) {
-                top = targetRect.bottom + margin;
-                arrowPosition = 'top';
-            } else if (targetRect.top - tooltipRect.height - margin >= 0) {
-                top = targetRect.top - tooltipRect.height - margin;
-                arrowPosition = 'bottom';
-            } else {
-                if (targetRect.left > screenWidth / 2) {
-                    left = targetRect.left - tooltipRect.width - margin;
-                    arrowPosition = 'right';
-                } else {
-                    left = targetRect.right + margin;
-                    arrowPosition = 'left';
-                }
-                top = Math.max(margin, Math.min(screenHeight - tooltipRect.height - margin, targetRect.top));
-            }
-
-            if (left === undefined) {
-                left = targetRect.left + (targetRect.width - tooltipRect.width) / 2;
-            }
-        }
-    }
-
-    // Ensure the tooltip stays within screen bounds
-    top = Math.max(margin, Math.min(top, screenHeight - tooltipRect.height - margin));
-    left = Math.max(margin, Math.min(left, screenWidth - tooltipRect.width - margin));
-
-    return { top, left, arrowPosition };
-}
-
-function getArrowDirection(arrowPosition) {
-    switch (arrowPosition) {
-        case 'top': return arrowDirections.up;
-        case 'bottom': return arrowDirections.down;
-        case 'left': return arrowDirections.left;
-        case 'right': return arrowDirections.right;
-    }
-}
-
-function showFinalStep() {
-    const finalTooltip = document.createElement('div');
-    finalTooltip.className = 'tour-final-tooltip';
-    finalTooltip.innerHTML = `
-        <p class="tour-content">Congratulations! You've completed the tour of Camille's List.</p>
-        <div class="tour-buttons">
-            <button class="tour-button">Finish Tour</button>
-        </div>
-    `;
-
-    finalTooltip.querySelector('.tour-button').onclick = endTour;
-    document.body.appendChild(finalTooltip);
-
-    finalTooltip.style.position = 'fixed';
-    finalTooltip.style.top = '50%';
-    finalTooltip.style.left = '50%';
-    finalTooltip.style.transform = 'translate(-50%, -50%)';
-}
-
 function progressTour() {
-    if (tourState.active) {
-        const nextButton = document.querySelector('.tour-tooltip .next-button');
-        if (nextButton) {
-            nextButton.click();
-        } else {
-            const finishButton = document.querySelector('.tour-final-tooltip .tour-button');
-            if (finishButton) {
-                finishButton.click();
-            }
-        }
+    removeOverlay();
+    showTourStep(tourState.currentStep + 1);
+}
+
+function removeOverlay() {
+    const overlay = document.querySelector('.tour-overlay');
+    if (overlay) {
+        overlay.remove();
     }
 }
