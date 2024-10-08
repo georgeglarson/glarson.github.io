@@ -388,6 +388,10 @@ function initializeApp() {
     } else {
         startTourButton.style.display = 'none';
     }
+
+    // Add event listener for user interaction
+    document.addEventListener('click', shrinkTitle);
+    document.addEventListener('keydown', shrinkTitle);
 }
 
 // Move this event listener outside of initializeApp
@@ -424,3 +428,13 @@ function resetTour() {
 
 // Make sure resetTour is available globally
 window.resetTour = resetTour;
+
+function shrinkTitle() {
+    const listTitle = document.getElementById('listTitle');
+    if (!listTitle.classList.contains('shrunk')) {
+        listTitle.classList.add('shrunk');
+        // Remove event listeners after shrinking
+        document.removeEventListener('click', shrinkTitle);
+        document.removeEventListener('keydown', shrinkTitle);
+    }
+}
