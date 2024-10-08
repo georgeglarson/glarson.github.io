@@ -1,6 +1,16 @@
+const sampleList = [
+    { text: "Buy groceries", checked: false },
+    { text: "Finish project report", checked: true },
+    { text: "Call mom", checked: false },
+    { text: "Go for a run", checked: false }
+];
+
+let originalList = [];
+
 const tourSteps = [
     { element: '#toggleAddItem', content: 'Click here to add a new item to your list.' },
-    { element: '#goalList', content: 'Your tasks will appear here. Click on a task to mark it as complete.' },
+    { element: '#goalList li:nth-child(1)', content: 'This is an unchecked item. Click on it to mark it as complete.' },
+    { element: '#goalList li:nth-child(2)', content: 'This is a completed item. Click on it to uncheck it.' },
     { element: '#listSelect', content: 'Switch between different lists using this dropdown.' },
     { element: '#themeToggle', content: 'Toggle between light and dark mode here.' },
 ];
@@ -22,6 +32,21 @@ function startTour() {
     tourState.active = true;
     tourState.currentStep = 0;
     document.getElementById('startTourButton').style.display = 'none';
+    
+    if (window.todoLists && window.currentList) {
+        originalList = JSON.parse(JSON.stringify(window.todoLists[window.currentList]));
+        window.todoLists[window.currentList] = JSON.parse(JSON.stringify(sampleList));
+    } else {
+        console.warn('todoLists or currentList is undefined. Using sample list for tour.');
+        originalList = [];
+    }
+    
+    if (typeof window.renderList === 'function') {
+        window.renderList();
+    } else {
+        console.warn('renderList function is not available. Tour may not display correctly.');
+    }
+    
     showTourStep(tourState.currentStep);
 }
 
@@ -135,7 +160,13 @@ function endTour() {
     console.log('Ending tour');
     tourState.active = false;
     removeAllHighlights();
+    
+    // Restore the original list
+    window.todoLists[window.currentList] = originalList;
+    window.renderList();
+    
     localStorage.setItem('tourCompleted', 'true');
+    document.getElementById('startTourButton').style.display = 'block';
 }
 
 function removeTooltip(selector) {
@@ -169,7 +200,12 @@ function abortTour() {
         removeTooltip('.tour-tooltip');
         tourState.active = false;
         removeTourEscapeListeners();
-        document.getElementById('startTourButton').style.display = 'block'; // Show the button
+        
+        // Restore the original list
+        window.todoLists[window.currentList] = originalList;
+        window.renderList();
+        
+        document.getElementById('startTourButton').style.display = 'block';
         console.log('Tour aborted');
     }
 }

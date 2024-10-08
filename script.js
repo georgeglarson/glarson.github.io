@@ -80,6 +80,9 @@ function saveList() {
     const li = document.createElement('li');
     li.textContent = text;
     if (checked) li.classList.add('checked');
+    window.todoLists = getListsFromStorage();
+    window.currentList = currentListName;
+    window.renderList = loadList;
     return li;
 }
 function loadList(listName = "Camille's List") {
@@ -438,3 +441,8 @@ function shrinkTitle() {
         document.removeEventListener('keydown', shrinkTitle);
     }
 }
+
+// Add these lines at the end of the file
+window.todoLists = todoLists;
+window.currentList = currentList;
+window.renderList = renderList;
