@@ -313,22 +313,16 @@ button:active {
 .tour-tooltip {
     position: absolute;
     background: #FFD700;
-    /* Bright yellow background */
     border: 3px dashed #FF69B4;
-    /* Hot pink dashed border */
     border-radius: 15px;
-    /* Rounded corners */
     padding: 15px;
     box-shadow: 5px 5px 0px #201e1e;
-    /* Playful offset shadow */
     z-index: 1000;
     color: #333;
     font-size: 16px;
-    min-width: 220px;
+    width: 220px;
     font-family: 'Marker Felt', 'Neucha', cursive;
-    /* Fun, handwritten-style font */
     transform: rotate(-2deg);
-    /* Slight tilt for quirkiness */
 }
 
 .tour-tooltip p {
@@ -338,7 +332,6 @@ button:active {
 
 .tour-tooltip button {
     background-color: #FF6347;
-    /* Tomato color */
     color: white;
     border: none;
     border-radius: 25px;
@@ -378,20 +371,44 @@ button:active {
 }
 
 .tour-arrow-top {
-    top: -45%;
-    left: 1%;
-    transform: rotate(-16deg);
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .tour-arrow-bottom {
-    top: 95%;
-    left: 55%;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .tour-arrow {
     position: absolute;
-    font-size: 54px;
-    animation: wiggle 2.5s infinite;
+    font-size: 24px;
+}
+
+.tour-arrow-left {
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.tour-arrow-right {
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+@media (max-width: 600px) {
+    .tour-tooltip {
+        font-size: 14px;
+        padding: 10px;
+        width: 180px;
+    }
+
+    .tour-arrow {
+        font-size: 18px;
+    }
 }
 
 .camilles-list {

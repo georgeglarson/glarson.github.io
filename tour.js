@@ -104,7 +104,7 @@ function showTourStep(step) {
 
         const targetRect = targetElement.getBoundingClientRect();
         const tooltipRect = tooltip.getBoundingClientRect();
-        const { top, left, arrowPosition } = calculateTooltipPosition(targetRect, tooltipRect);
+        const { top, left, arrowPosition } = calculateTooltipPosition(targetRect, tooltipRect, step);
 
         tooltip.style.position = 'absolute';
         tooltip.style.top = `${top}px`;
@@ -112,7 +112,12 @@ function showTourStep(step) {
 
         const arrowSpan = tooltip.querySelector('.tour-arrow');
         arrowSpan.className = `tour-arrow tour-arrow-${arrowPosition}`;
-        arrowSpan.textContent = getArrowDirection(targetRect, tooltipRect);
+        arrowSpan.textContent = getArrowDirection(targetRect, tooltipRect, arrowPosition);
+
+        console.log('Step:', step);
+        console.log('Target rect:', targetRect);
+        console.log('Tooltip rect:', tooltipRect);
+        console.log('Calculated position:', { top, left, arrowPosition });
     }, 500);
 }
 
@@ -144,30 +149,73 @@ function createTooltip(content, showPrevButton) {
     return tooltip;
 }
 
-function calculateTooltipPosition(targetRect, tooltipRect) {
+function calculateTooltipPosition(targetRect, tooltipRect, step) {
     const margin = 10;
-    let top = targetRect.bottom + window.scrollY + margin;
-    let left = targetRect.left + window.scrollX;
-    let arrowPosition = 'top';
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+    
+    let top, left, arrowPosition;
 
-    if (left + tooltipRect.width > window.innerWidth) {
-        left = window.innerWidth - tooltipRect.width - margin;
-    }
+    // Special case for the theme toggle (step 4)
+    if (step === 3) {  // 0-based index, so step 4 is index 3
+        left = targetRect.left - tooltipRect.width - margin;
+        top = targetRect.top;
+        arrowPosition = 'right';
 
-    // Check if the tooltip would go off the bottom of the screen
-    if (top + tooltipRect.height > window.innerHeight + window.scrollY) {
-        top = targetRect.top + window.scrollY - tooltipRect.height - margin;
-        arrowPosition = 'bottom';
-    }
+        // Adjust if the tooltip goes off the left side of the screen
+        if (left < margin) {
+            left = margin;
+            arrowPosition = 'left';
+        }
 
-    // Determine if the tooltip is higher than the target
-    if (top < targetRect.top + window.scrollY) {
-        arrowPosition = 'bottom';
+        // Adjust if the tooltip goes off the bottom of the screen
+        if (top + tooltipRect.height > screenHeight - margin) {
+            top = screenHeight - tooltipRect.height - margin;
+        }
+
+        // Adjust if the tooltip goes off the top of the screen
+        if (top < margin) {
+            top = margin;
+        }
     } else {
-        arrowPosition = 'top';
+        // Existing positioning logic for other steps
+        if (targetRect.bottom + tooltipRect.height + margin <= screenHeight) {
+            top = targetRect.bottom + margin;
+            arrowPosition = 'top';
+        } else if (targetRect.top - tooltipRect.height - margin >= 0) {
+            top = targetRect.top - tooltipRect.height - margin;
+            arrowPosition = 'bottom';
+        } else {
+            if (targetRect.left > screenWidth / 2) {
+                left = targetRect.left - tooltipRect.width - margin;
+                arrowPosition = 'right';
+            } else {
+                left = targetRect.right + margin;
+                arrowPosition = 'left';
+            }
+            top = Math.max(margin, Math.min(screenHeight - tooltipRect.height - margin, targetRect.top));
+        }
+
+        if (left === undefined) {
+            left = targetRect.left + (targetRect.width - tooltipRect.width) / 2;
+            if (left < margin) {
+                left = margin;
+            } else if (left + tooltipRect.width > screenWidth - margin) {
+                left = screenWidth - tooltipRect.width - margin;
+            }
+        }
     }
-    console.log('Calculated tooltip position:', { top, left, arrowPosition });
+
     return { top, left, arrowPosition };
+}
+
+function getArrowDirection(targetRect, tooltipRect, arrowPosition) {
+    switch (arrowPosition) {
+        case 'top': return arrowDirections.up;
+        case 'bottom': return arrowDirections.down;
+        case 'left': return arrowDirections.left;
+        case 'right': return arrowDirections.right;
+    }
 }
 
 function showFinalStep() {
@@ -187,19 +235,6 @@ function showFinalStep() {
     finalTooltip.style.top = '50%';
     finalTooltip.style.left = '50%';
     finalTooltip.style.transform = 'translate(-50%, -50%)';
-}
-
-function getArrowDirection(targetRect, tooltipRect) {
-    const centerX = targetRect.left + targetRect.width / 2;
-    const centerY = targetRect.top + targetRect.height / 2;
-    const tooltipCenterX = tooltipRect.left + tooltipRect.width / 2;
-    const tooltipCenterY = tooltipRect.top + tooltipRect.height / 2;
-
-    if (Math.abs(centerX - tooltipCenterX) > Math.abs(centerY - tooltipCenterY)) {
-        return centerX > tooltipCenterX ? arrowDirections.right : arrowDirections.left;
-    } else {
-        return centerY > tooltipCenterY ? arrowDirections.down : arrowDirections.up;
-    }
 }
 
 function progressTour() {
