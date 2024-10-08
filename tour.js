@@ -11,20 +11,13 @@ const tourSteps = [
     { element: '#toggleAddItem', content: 'Click here to add a new item to your list.' },
     { element: '#goalList li:nth-child(1)', content: 'This is an unchecked item. Click on it to mark it as complete.' },
     { element: '#goalList li:nth-child(2)', content: 'This is a completed item. Click on it to uncheck it.' },
-    { element: '#listSelect', content: 'Switch between different lists using this dropdown.' },
+    { element: '#listSelect', content: 'Switch between different lists using this dropdown.', allowInteraction: true },
     { element: '#themeToggle', content: 'Toggle between light and dark mode here.' },
 ];
 
 const tourState = {
     active: false,
     currentStep: 0
-};
-
-const arrowDirections = {
-    left: '⬅️',
-    right: '➡️',
-    up: '⬆️',
-    down: '⬇️'
 };
 
 function startTour() {
@@ -72,10 +65,11 @@ function showTourStep(step) {
     const overlay = createOverlay(content, step);
     document.body.appendChild(overlay);
 
-    highlightElement(targetElement, step);
+    const cleanup = highlightElement(targetElement, step);
     
-    tourState.currentStep = step;
-    
+    // Store cleanup function for later use
+    tourState.currentCleanup = cleanup;
+
     addTourEscapeListeners();
 }
 
@@ -93,14 +87,8 @@ function createOverlay(content, step) {
         </div>
     `;
 
-    if (step === 3) { // Theme toggle step
-        const tourContent = overlay.querySelector('.tour-content');
-        tourContent.style.position = 'absolute';
-        tourContent.style.bottom = '80px'; // Increase bottom margin
-        tourContent.style.right = '20px';
-        tourContent.style.left = 'auto';
-        tourContent.style.maxWidth = '250px'; // Limit width to avoid covering the button
-    }
+    const targetElement = document.querySelector(tourSteps[step].element);
+    positionTourContent(overlay, targetElement);
 
     overlay.querySelector('.next-button').addEventListener('click', progressTour);
 
@@ -115,32 +103,60 @@ function createOverlay(content, step) {
 }
 
 function highlightElement(element, step) {
-    if (step === 3) { // Theme toggle step
-        // Create a fixed position highlight that doesn't move the original element
+    const tourStep = tourSteps[step];
+    
+    const highlightEl = document.createElement('div');
+    highlightEl.className = 'tour-highlight-fixed';
+    
+    function updateHighlightPosition() {
         const rect = element.getBoundingClientRect();
-        const highlightEl = document.createElement('div');
-        highlightEl.className = 'tour-highlight-fixed';
-        highlightEl.style.top = `${rect.top}px`;
-        highlightEl.style.left = `${rect.left}px`;
+        highlightEl.style.top = `${rect.top + window.scrollY}px`;
+        highlightEl.style.left = `${rect.left + window.scrollX}px`;
         highlightEl.style.width = `${rect.width}px`;
         highlightEl.style.height = `${rect.height}px`;
-        document.body.appendChild(highlightEl);
-        
-        // Add click event to the highlight element
+    }
+    
+    updateHighlightPosition();
+    document.body.appendChild(highlightEl);
+    
+    const scrollHandler = throttle(updateHighlightPosition, 100);
+    window.addEventListener('scroll', scrollHandler);
+    window.addEventListener('resize', scrollHandler);
+    
+    if (tourStep.allowInteraction) {
+        element.addEventListener('change', handleListSelectChange);
+    } else {
         highlightEl.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            element.click(); // Trigger the original button's click
             progressTour();
         });
-    } else {
-        // For other elements, use the original highlighting method
-        element.classList.add('tour-highlight');
-        element.style.position = 'relative';
-        element.style.zIndex = '1002';
     }
 
-    element.addEventListener('click', progressTour);
+    // Return a cleanup function
+    return () => {
+        window.removeEventListener('scroll', scrollHandler);
+        window.removeEventListener('resize', scrollHandler);
+        if (tourStep.allowInteraction) {
+            element.removeEventListener('change', handleListSelectChange);
+        }
+        highlightEl.remove();
+    };
+}
+
+function handleListSelectChange(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const listSelect = document.getElementById('listSelect');
+    const selectedValue = listSelect.value;
+    
+    // Call the switchList function if it exists
+    if (typeof window.switchList === 'function') {
+        window.switchList();
+    }
+    
+    // Don't progress the tour automatically
+    // The user will need to click the "Next" button to continue
 }
 
 function removeAllHighlights() {
@@ -151,9 +167,12 @@ function removeAllHighlights() {
         el.removeEventListener('click', progressTour);
     });
     document.querySelectorAll('.tour-highlight-fixed').forEach(el => {
-        el.removeEventListener('click', progressTour);
         el.remove();
     });
+    const listSelect = document.getElementById('listSelect');
+    if (listSelect) {
+        listSelect.removeEventListener('change', handleListSelectChange);
+    }
 }
 
 function endTour() {
@@ -161,6 +180,12 @@ function endTour() {
     tourState.active = false;
     removeAllHighlights();
     
+    // Call cleanup function if it exists
+    if (tourState.currentCleanup) {
+        tourState.currentCleanup();
+        tourState.currentCleanup = null;
+    }
+
     // Restore the original list
     window.todoLists[window.currentList] = originalList;
     window.renderList();
@@ -219,5 +244,42 @@ function removeOverlay() {
     const overlay = document.querySelector('.tour-overlay');
     if (overlay) {
         overlay.remove();
+    }
+}
+
+function positionTourContent(overlay, targetElement) {
+    const tourContent = overlay.querySelector('.tour-content');
+    const rect = targetElement.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const viewportWidth = window.innerWidth;
+    
+    // Reset styles
+    tourContent.style.position = 'absolute';
+    tourContent.style.top = '';
+    tourContent.style.bottom = '';
+    tourContent.style.left = '';
+    tourContent.style.right = '';
+    
+    if (rect.top > viewportHeight / 2) {
+        // If target is in the bottom half, position content above
+        tourContent.style.bottom = `${viewportHeight - rect.top + 10}px`;
+    } else {
+        // Otherwise, position content below
+        tourContent.style.top = `${rect.bottom + 10}px`;
+    }
+    
+    if (rect.left > viewportWidth / 2) {
+        // If target is in the right half, align content to the right
+        tourContent.style.right = '20px';
+    } else {
+        // Otherwise, align content to the left
+        tourContent.style.left = '20px';
+    }
+}
+
+function handleScroll() {
+    const listTitle = document.getElementById('listTitle');
+    if (window.scrollY > 50 && !listTitle.classList.contains('shrunk')) {
+        shrinkTitle();
     }
 }

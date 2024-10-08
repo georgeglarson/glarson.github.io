@@ -371,35 +371,6 @@ button:active {
     color: #333;
 }
 
-.tour-arrow-top {
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.tour-arrow-bottom {
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.tour-arrow {
-    position: absolute;
-    font-size: 24px;
-}
-
-.tour-arrow-left {
-    right: 100%;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-.tour-arrow-right {
-    left: 100%;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
 @media (max-width: 600px) {
     .tour-tooltip {
         font-size: 14px;
@@ -503,3 +474,41 @@ body.dark-mode .tour-button:hover {
 }
 
 /* ... rest of the existing styles ... */
+
+#listTitle {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--bg-color);
+    padding: 10px;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#listTitle.shrunk {
+    font-size: 1.5em;
+    padding: 5px;
+}
+
+body {
+    padding-top: 80px; /* Adjust this value based on your header height */
+}
+
+/* Update the existing .camilles-list styles */
+.camilles-list {
+    font-family: 'Brush Script MT', cursive;
+    font-size: 3em; 
+    color: #ff69b4;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); 
+    letter-spacing: 1px; 
+    transition: all 0.5s ease;
+}
+
+.camilles-list.shrunk {
+    font-size: 1.5em;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    letter-spacing: 0.5px;
+}

@@ -80,9 +80,6 @@ function saveList() {
     const li = document.createElement('li');
     li.textContent = text;
     if (checked) li.classList.add('checked');
-    window.todoLists = getListsFromStorage();
-    window.currentList = currentListName;
-    window.renderList = loadList;
     return li;
 }
 function loadList(listName = "Camille's List") {
@@ -118,6 +115,7 @@ function loadList(listName = "Camille's List") {
     }
     toggleAddItemView(false);
 }
+// Consolidate handleListNameChange, createNewList, and renameList
 function handleListNameChange(action) {
     const formId = action === 'create' ? 'newListForm' : 'renameListForm';
     const inputId = action === 'create' ? 'newListName' : 'newListNameInput';
@@ -128,12 +126,9 @@ function handleListNameChange(action) {
     input.focus();
 }
 
-function createNewList() {
-    handleListNameChange('create');
-}
-
-function renameList() {
-    handleListNameChange('rename');
+// Consolidate cancelNewList and cancelRenameList
+function cancelListNameChange(formId) {
+    document.getElementById(formId).style.display = 'none';
 }
 
 function submitListNameChange(action) {
@@ -181,10 +176,6 @@ function submitNewList() {
 
 function submitRenameList() {
     submitListNameChange('rename');
-}
-
-function cancelListNameChange(formId) {
-    document.getElementById(formId).style.display = 'none';
 }
 
 function switchList() {
@@ -375,6 +366,9 @@ function initializeApp() {
         lists["Camille's List"] = { items: [] };
         saveListsToStorage(lists);
     }
+    window.todoLists = getListsFromStorage();
+    window.currentList = currentListName;
+    window.renderList = loadList;
     updateListDropdown();
     getListFromURI();
     loadList(currentListName);
@@ -392,9 +386,17 @@ function initializeApp() {
         startTourButton.style.display = 'none';
     }
 
-    // Add event listener for user interaction
-    document.addEventListener('click', shrinkTitle);
-    document.addEventListener('keydown', shrinkTitle);
+    // Combine click and keydown event listeners
+    function shrinkTitleOnInteraction(event) {
+        if (event.type === 'click' || (event.type === 'keydown' && event.key === 'Enter')) {
+            shrinkTitle();
+        }
+    }
+    document.addEventListener('click', shrinkTitleOnInteraction);
+    document.addEventListener('keydown', shrinkTitleOnInteraction);
+
+    // Add this to your initializeApp function
+    window.addEventListener('scroll', handleScroll);
 }
 
 // Move this event listener outside of initializeApp
@@ -434,15 +436,26 @@ window.resetTour = resetTour;
 
 function shrinkTitle() {
     const listTitle = document.getElementById('listTitle');
-    if (!listTitle.classList.contains('shrunk')) {
-        listTitle.classList.add('shrunk');
-        // Remove event listeners after shrinking
-        document.removeEventListener('click', shrinkTitle);
-        document.removeEventListener('keydown', shrinkTitle);
+    listTitle.classList.add('shrunk');
+    // Remove event listeners after shrinking
+    document.removeEventListener('click', shrinkTitleOnInteraction);
+    document.removeEventListener('keydown', shrinkTitleOnInteraction);
+    window.removeEventListener('scroll', handleScroll);
+}
+
+// Optimize handleScroll with throttling
+const throttle = (func, limit) => {
+    let inThrottle;
+    return function() {
+        const args = arguments;
+        const context = this;
+        if (!inThrottle) {
+            func.apply(context, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
     }
 }
 
-// Add these lines at the end of the file
-window.todoLists = todoLists;
-window.currentList = currentList;
-window.renderList = renderList;
+// At the end of your script.js file
+window.switchList = switchList;
