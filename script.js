@@ -252,6 +252,7 @@ function generateExportLink() {
     const url = `${window.location.origin}${window.location.pathname}?name=${encodedListName}&list=${encodedList}&isPreset=${isPreset}`;
     window.history.pushState({}, '', url);
     console.log('Copy this link:', url);
+    return url;
 }
 
 function doneAddingItems() {
@@ -379,8 +380,24 @@ function initializeApp() {
         toggleAddItemView(true);
     });
     document.getElementById('app-version').textContent = APP_VERSION;
+
+    // Show or hide the start tour button based on whether the tour has been completed
+    const startTourButton = document.getElementById('startTourButton');
+    if (localStorage.getItem('tourCompleted') === 'true') {
+        startTourButton.style.display = 'block';
+    } else {
+        startTourButton.style.display = 'none';
+    }
 }
-window.onload = initializeApp;
+
+// Move this event listener outside of initializeApp
+document.addEventListener('DOMContentLoaded', () => {
+    initializeApp();
+    // Change this line to check for the new 'tourCompleted' flag
+    if (localStorage.getItem('tourCompleted') !== 'true') {
+        startTour();
+    }
+});
 
 // Consolidated function for handling Enter key press
 function handleEnterKey(inputId, submitFunction) {
@@ -399,6 +416,11 @@ handleEnterKey('presetNameInput', submitSavePreset);
 
 const APP_VERSION = '5.2.4';
 
-document.addEventListener('DOMContentLoaded', () => {
+// Add this function at the end of the file
+function resetTour() {
+    localStorage.removeItem('tourCompleted');
     startTour();
-});
+}
+
+// Make sure resetTour is available globally
+window.resetTour = resetTour;

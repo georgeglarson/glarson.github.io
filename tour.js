@@ -21,6 +21,7 @@ function startTour() {
     console.log('Tour started');
     tourState.active = true;
     tourState.currentStep = 0;
+    document.getElementById('startTourButton').style.display = 'none'; // Hide the button
     showTourStep(tourState.currentStep);
     addTourEscapeListeners();
 }
@@ -49,6 +50,7 @@ function abortTour() {
         removeTooltip('.tour-tooltip');
         tourState.active = false;
         removeTourEscapeListeners();
+        document.getElementById('startTourButton').style.display = 'block'; // Show the button
         console.log('Tour aborted');
     }
 }
@@ -57,6 +59,8 @@ function endTour() {
     removeTooltip('.tour-final-tooltip');
     tourState.active = false;
     removeTourEscapeListeners();
+    localStorage.setItem('tourCompleted', 'true');
+    document.getElementById('startTourButton').style.display = 'block'; // Show the button
 }
 
 function removeTooltip(selector) {

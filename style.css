@@ -50,17 +50,23 @@
     }
 }
 
-#themeToggle {
+#themeToggle,
+#startTourButton {
     position: fixed;
     bottom: 50px;
-    /* Increased from 20px to 50px */
-    right: 20px;
     font-size: 24px;
     background: none;
     border: none;
     cursor: pointer;
     z-index: 1000;
-    /* Added to ensure it's above other elements */
+}
+
+#themeToggle {
+    right: 20px;
+}
+
+#startTourButton {
+    right: 60px; /* Position it to the left of the theme toggle */
 }
 
 body.dark-mode {
