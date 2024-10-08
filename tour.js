@@ -45,6 +45,10 @@ function startTour() {
 
 function showTourStep(step) {
     console.log(`Showing step ${step}`);
+    if (step < 0) {
+        console.log('Reached the beginning of the tour');
+        return;
+    }
     if (step >= tourSteps.length) {
         console.log('Tour completed');
         endTour();
@@ -71,8 +75,10 @@ function showTourStep(step) {
     tourState.currentCleanup = cleanup;
 
     addTourEscapeListeners();
+    
+    // Update the current step
+    tourState.currentStep = step;
 }
-
 function createOverlay(content, step) {
     const overlay = document.createElement('div');
     overlay.className = 'tour-overlay';
@@ -237,9 +243,12 @@ function abortTour() {
 
 function progressTour() {
     removeOverlay();
-    showTourStep(tourState.currentStep + 1);
+    if (tourState.currentStep < tourSteps.length - 1) {
+        showTourStep(tourState.currentStep + 1);
+    } else {
+        endTour();
+    }
 }
-
 function removeOverlay() {
     const overlay = document.querySelector('.tour-overlay');
     if (overlay) {

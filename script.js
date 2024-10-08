@@ -386,14 +386,30 @@ function initializeApp() {
         startTourButton.style.display = 'none';
     }
 
-    // Combine click and keydown event listeners
     function shrinkTitleOnInteraction(event) {
         if (event.type === 'click' || (event.type === 'keydown' && event.key === 'Enter')) {
             shrinkTitle();
         }
     }
-    document.addEventListener('click', shrinkTitleOnInteraction);
-    document.addEventListener('keydown', shrinkTitleOnInteraction);
+    
+    function initializeApp() {
+        // ... (other initialization code)
+    
+        document.addEventListener('click', shrinkTitleOnInteraction);
+        document.addEventListener('keydown', shrinkTitleOnInteraction);
+    
+        // Add this to your initializeApp function
+        window.addEventListener('scroll', handleScroll);
+    }
+    
+    function shrinkTitle() {
+        const listTitle = document.getElementById('listTitle');
+        listTitle.classList.add('shrunk');
+        // Remove event listeners after shrinking
+        document.removeEventListener('click', shrinkTitleOnInteraction);
+        document.removeEventListener('keydown', shrinkTitleOnInteraction);
+        window.removeEventListener('scroll', handleScroll);
+    }
 
     // Add this to your initializeApp function
     window.addEventListener('scroll', handleScroll);
