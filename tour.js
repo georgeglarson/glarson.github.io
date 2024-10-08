@@ -106,13 +106,13 @@ function showTourStep(step) {
         const tooltipRect = tooltip.getBoundingClientRect();
         const { top, left, arrowPosition } = calculateTooltipPosition(targetRect, tooltipRect, step);
 
-        tooltip.style.position = 'absolute';
+        tooltip.style.position = 'fixed'; // Change to fixed positioning
         tooltip.style.top = `${top}px`;
         tooltip.style.left = `${left}px`;
 
         const arrowSpan = tooltip.querySelector('.tour-arrow');
         arrowSpan.className = `tour-arrow tour-arrow-${arrowPosition}`;
-        arrowSpan.textContent = getArrowDirection(targetRect, tooltipRect, arrowPosition);
+        arrowSpan.textContent = getArrowDirection(arrowPosition);
 
         console.log('Step:', step);
         console.log('Target rect:', targetRect);
@@ -156,60 +156,69 @@ function calculateTooltipPosition(targetRect, tooltipRect, step) {
     
     let top, left, arrowPosition;
 
-    // Special case for the theme toggle (step 4)
-    if (step === 3) {  // 0-based index, so step 4 is index 3
-        left = targetRect.left - tooltipRect.width - margin;
-        top = targetRect.top;
-        arrowPosition = 'right';
+    // Check if it's a mobile device
+    const isMobile = window.innerWidth <= 600;
 
-        // Adjust if the tooltip goes off the left side of the screen
-        if (left < margin) {
-            left = margin;
-            arrowPosition = 'left';
-        }
-
-        // Adjust if the tooltip goes off the bottom of the screen
-        if (top + tooltipRect.height > screenHeight - margin) {
-            top = screenHeight - tooltipRect.height - margin;
-        }
-
-        // Adjust if the tooltip goes off the top of the screen
-        if (top < margin) {
-            top = margin;
-        }
-    } else {
-        // Existing positioning logic for other steps
-        if (targetRect.bottom + tooltipRect.height + margin <= screenHeight) {
+    if (isMobile) {
+        // Mobile positioning logic
+        if (step === 2) { // List select step
             top = targetRect.bottom + margin;
+            left = (screenWidth - tooltipRect.width) / 2;
             arrowPosition = 'top';
-        } else if (targetRect.top - tooltipRect.height - margin >= 0) {
+        } else if (step === 3) { // Theme toggle step
             top = targetRect.top - tooltipRect.height - margin;
+            left = (screenWidth - tooltipRect.width) / 2;
             arrowPosition = 'bottom';
         } else {
-            if (targetRect.left > screenWidth / 2) {
-                left = targetRect.left - tooltipRect.width - margin;
-                arrowPosition = 'right';
-            } else {
+            // Default mobile positioning
+            top = targetRect.bottom + margin;
+            left = (screenWidth - tooltipRect.width) / 2;
+            arrowPosition = 'top';
+        }
+    } else {
+        // Desktop positioning logic
+        if (step === 3) { // Theme toggle step
+            left = targetRect.left - tooltipRect.width - margin;
+            top = targetRect.top;
+            arrowPosition = 'right';
+
+            if (left < margin) {
                 left = targetRect.right + margin;
                 arrowPosition = 'left';
             }
-            top = Math.max(margin, Math.min(screenHeight - tooltipRect.height - margin, targetRect.top));
-        }
+        } else {
+            // Default desktop positioning
+            if (targetRect.bottom + tooltipRect.height + margin <= screenHeight) {
+                top = targetRect.bottom + margin;
+                arrowPosition = 'top';
+            } else if (targetRect.top - tooltipRect.height - margin >= 0) {
+                top = targetRect.top - tooltipRect.height - margin;
+                arrowPosition = 'bottom';
+            } else {
+                if (targetRect.left > screenWidth / 2) {
+                    left = targetRect.left - tooltipRect.width - margin;
+                    arrowPosition = 'right';
+                } else {
+                    left = targetRect.right + margin;
+                    arrowPosition = 'left';
+                }
+                top = Math.max(margin, Math.min(screenHeight - tooltipRect.height - margin, targetRect.top));
+            }
 
-        if (left === undefined) {
-            left = targetRect.left + (targetRect.width - tooltipRect.width) / 2;
-            if (left < margin) {
-                left = margin;
-            } else if (left + tooltipRect.width > screenWidth - margin) {
-                left = screenWidth - tooltipRect.width - margin;
+            if (left === undefined) {
+                left = targetRect.left + (targetRect.width - tooltipRect.width) / 2;
             }
         }
     }
 
+    // Ensure the tooltip stays within screen bounds
+    top = Math.max(margin, Math.min(top, screenHeight - tooltipRect.height - margin));
+    left = Math.max(margin, Math.min(left, screenWidth - tooltipRect.width - margin));
+
     return { top, left, arrowPosition };
 }
 
-function getArrowDirection(targetRect, tooltipRect, arrowPosition) {
+function getArrowDirection(arrowPosition) {
     switch (arrowPosition) {
         case 'top': return arrowDirections.up;
         case 'bottom': return arrowDirections.down;
