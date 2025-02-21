@@ -2,39 +2,262 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>George Larson's Resume</title>
+    <meta name="description" content="George Larson - Director of Technology with expertise in software engineering, infrastructure management, and AI. View my professional experience and projects.">
+    <meta name="keywords" content="George Larson, Technology Director, Software Engineer, DevOps, Infrastructure, AI, Pittsburgh">
+    <meta name="author" content="George Larson">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="George Larson - Technology Director & Software Engineer">
+    <meta property="og:description" content="Experienced technology leader with expertise in software engineering, infrastructure management, and AI development.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://georgeglarson.github.io">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    
+    <title>George Larson - Technology Director & Software Engineer</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="#resume">Resume</a></li>
-            <li><a href="#projects">Projects</a></li>
-            <li><a href="#linkedin">LinkedIn</a></li>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <nav role="navigation" aria-label="Main navigation">
+        <ul role="menubar">
+            <li role="none"><a href="#resume" role="menuitem">Resume</a></li>
+            <li role="none"><a href="#projects" role="menuitem">Projects</a></li>
+            <li role="none"><a href="#social" role="menuitem">Connect</a></li>
         </ul>
     </nav>
-    <div id="resume">
-        <!-- Resume content will be inserted here -->
-    </div>
-    <div id="projects">
-        <h2>Projects</h2>
-        <ul>
-            <li><a href="https://github.com/georgeglarson/deep-research-privacy" target="_blank">Deep Research Privacy</a></li>
+    <main id="main-content">
+    <section id="resume" aria-labelledby="resume-heading">
+        <h2 id="resume-heading" class="section-title">Resume</h2>
+        <div class="resume-actions">
+            <a href="resume_george-larson.md" download class="download-link">
+                <span class="download-icon" aria-hidden="true">⬇️</span>
+                <span>Download Resume</span>
+            </a>
+        </div>
+        <div id="resume-loading" class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Loading resume...</p>
+        </div>
+        <div id="resume-error" class="error-message" style="display: none;">
+            <p>Failed to load resume content. Please try refreshing the page.</p>
+        </div>
+        <div id="resume-content"></div>
+    </section>
+    
+    <button id="back-to-top" title="Back to Top">↑</button>
+    
+    <section id="projects" aria-labelledby="projects-heading">
+        <h2 id="projects-heading" class="section-title">Projects</h2>
+        <ul class="projects-grid" role="list">
+            <!-- Primary Project - New & Most Important -->
+            <li class="project-card">
+                <div class="project-content">
+                    <h3 class="project-title">
+                        <a href="https://github.com/georgeglarson/deep-research-privacy" target="_blank" class="project-link">
+                            Deep Research: Privacy Edition
+                            <span class="project-description">Privacy-focused research tool combining Venice.ai's uncensored language models with Brave Search</span>
+                        </a>
+                    </h3>
+                    <div class="tech-stack">
+                        <span class="tech-badge">AI</span>
+                        <span class="tech-badge">TypeScript</span>
+                        <span class="tech-badge">Privacy</span>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Secondary Projects - Venice.ai Clients -->
+            <li class="project-card">
+                <div class="project-content">
+                    <h3 class="project-title">
+                        <a href="https://github.com/georgeglarson/venice-ai-client" target="_blank" class="project-link">
+                            venice-ai-client
+                            <span class="project-description">TypeScript client for Venice.ai API with comprehensive features</span>
+                        </a>
+                    </h3>
+                    <div class="tech-stack">
+                        <span class="tech-badge">TypeScript</span>
+                        <span class="tech-badge">AI</span>
+                        <span class="tech-badge">API</span>
+                    </div>
+                </div>
+            </li>
+            <li class="project-card">
+                <div class="project-content">
+                    <h3 class="project-title">
+                        <a href="https://github.com/georgeglarson/venice-ai-php" target="_blank" class="project-link">
+                            venice-ai-php
+                            <span class="project-description">PHP SDK for Venice AI with OpenAI API compatibility</span>
+                        </a>
+                    </h3>
+                    <div class="tech-stack">
+                        <span class="tech-badge">PHP</span>
+                        <span class="tech-badge">AI</span>
+                        <span class="tech-badge">SDK</span>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Established Projects -->
+            <li class="project-card">
+                <div class="project-content">
+                    <h3 class="project-title">
+                        <a href="https://github.com/georgeglarson/bloxlist" target="_blank" class="project-link">
+                            bloxlist
+                            <span class="project-description">Bash script using ipset/iptables to block IP addresses from public blocklists</span>
+                        </a>
+                    </h3>
+                    <div class="tech-stack">
+                        <span class="tech-badge">Bash</span>
+                        <span class="tech-badge">Security</span>
+                        <span class="tech-badge">Networking</span>
+                    </div>
+                </div>
+            </li>
+            <li class="project-card">
+                <div class="project-content">
+                    <h3 class="project-title">
+                        <a href="https://github.com/georgeglarson/Largo" target="_blank" class="project-link">
+                            Largo
+                            <span class="project-description">WordPress theme optimized for long-form journalism</span>
+                        </a>
+                    </h3>
+                    <div class="tech-stack">
+                        <span class="tech-badge">WordPress</span>
+                        <span class="tech-badge">PHP</span>
+                        <span class="tech-badge">Publishing</span>
+                    </div>
+                </div>
+            </li>
+            <li class="project-card">
+                <div class="project-content">
+                    <h3 class="project-title">
+                        <a href="https://github.com/georgeglarson/docker-bitmessage-gui" target="_blank" class="project-link">
+                            docker-bitmessage-gui
+                            <span class="project-description">Dockerized Bitmessage GUI with X forwarding and data persistence</span>
+                        </a>
+                    </h3>
+                    <div class="tech-stack">
+                        <span class="tech-badge">Docker</span>
+                        <span class="tech-badge">GUI</span>
+                        <span class="tech-badge">Privacy</span>
+                    </div>
+                </div>
+            </li>
+            <li class="project-card">
+                <div class="project-content">
+                    <h3 class="project-title">
+                        <a href="https://github.com/georgeglarson/wickr" target="_blank" class="project-link">
+                            wickr
+                            <span class="project-description">Dockerized Wickr encrypted messaging platform</span>
+                        </a>
+                    </h3>
+                    <div class="tech-stack">
+                        <span class="tech-badge">Docker</span>
+                        <span class="tech-badge">Security</span>
+                        <span class="tech-badge">Privacy</span>
+                    </div>
+                </div>
+            </li>
+
+            <!-- In Development -->
+            <li class="project-card">
+                <div class="project-content">
+                    <h3 class="project-title">
+                        <a href="https://github.com/georgeglarson/myBitmessage" target="_blank" class="project-link">
+                            myBitmessage
+                            <span class="project-description">Reference client for P2P encrypted decentralized communication (In Development)</span>
+                        </a>
+                    </h3>
+                    <div class="tech-stack">
+                        <span class="tech-badge">P2P</span>
+                        <span class="tech-badge">Encryption</span>
+                        <span class="tech-badge">Privacy</span>
+                    </div>
+                </div>
+            </li>
         </ul>
-    </div>
-    <div id="linkedin">
-        <h2>LinkedIn</h2>
-        <p>Connect with me on <a href="https://www.linkedin.com/in/georgelarson/" target="_blank">LinkedIn</a></p>
-    </div>
-    <script>
-        fetch('resume.md')
-            .then(response => response.text())
-            .then(text => {
-                const markdownContent = marked.parse(text);
-                document.getElementById('resume').innerHTML = markdownContent;
-            });
-    </script>
+    </section>
+    <section id="social" aria-labelledby="social-heading">
+        <h2 id="social-heading" class="section-title">Connect</h2>
+        <div class="social-links" role="list">
+            <a href="https://www.linkedin.com/in/georgelarson/" target="_blank" rel="noopener" class="social-link linkedin" role="listitem">
+                <span class="social-icon" aria-hidden="true">in</span>
+                <span class="social-label">LinkedIn</span>
+            </a>
+            <a href="https://x.com/g3ologic" target="_blank" rel="noopener" class="social-link x" role="listitem">
+                <span class="social-icon" aria-hidden="true">𝕏</span>
+                <span class="social-label">X / Twitter</span>
+            </a>
+            <a href="https://calendly.com/georgelarson/quick-chat" target="_blank" rel="noopener" class="social-link calendly" role="listitem">
+                <span class="social-icon" aria-hidden="true">📅</span>
+                <span class="social-label">Schedule Chat</span>
+            </a>
+        </div>
+    </section>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        // Initialize smooth scroll behavior for navigation
+        document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Back to top button functionality
+        const backToTopButton = document.getElementById('back-to-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopButton.style.display = 'block';
+            } else {
+                backToTopButton.style.display = 'none';
+            }
+        });
+
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Load and render resume content
+        const resumeLoading = document.getElementById('resume-loading');
+        const resumeError = document.getElementById('resume-error');
+        const resumeContent = document.getElementById('resume-content');
+
+        async function loadResume() {
+            try {
+                const response = await fetch('resume_george-larson.md');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const text = await response.text();
+                const markdownContent = marked.parse(text);
+                resumeContent.innerHTML = markdownContent;
+                resumeLoading.style.display = 'none';
+            } catch (error) {
+                console.error('Error loading resume:', error);
+                resumeLoading.style.display = 'none';
+                resumeError.style.display = 'block';
+            }
+        }
+
+        loadResume();
+
+        // Scroll to projects section by default
+        window.addEventListener('load', () => {
+            document.getElementById('projects').scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
 </body>
 </html>
