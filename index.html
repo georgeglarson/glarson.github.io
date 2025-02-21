@@ -3,74 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camille's List</title>
-    <link rel="stylesheet" href="style.css">
+    <title>George Larson's Resume</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1 id="listTitle" class="camilles-list">Camille's List</h1>
-    </header>
-    <main>
-        <ul id="goalList"></ul>
-        <div id="formContainer">
-            <div id="addItem" style="display: none;">
-                <input type="text" id="newItem" placeholder="Enter new item">
-                <button onclick="addNewItem()">Add Item</button>
-                <button onclick="doneAddingItems()">Done</button>
-            </div>
-            <div id="newListForm" style="display: none;">
-                <input type="text" id="newListName" placeholder="Enter new list name">
-                <button onclick="submitNewList()">Create</button>
-                <button onclick="cancelNewList()">Cancel</button>
-            </div>
-            <div id="renameListForm" style="display: none;">
-                <input type="text" id="newListNameInput" placeholder="Enter new list name">
-                <button onclick="submitRenameList()">Rename</button>
-                <button onclick="cancelRenameList()">Cancel</button>
-            </div>
-            <div id="savePresetForm" style="display: none;">
-                <input type="text" id="presetNameInput" placeholder="Enter preset name">
-                <button onclick="submitSavePreset()">Save</button>
-                <button onclick="cancelSavePreset()">Cancel</button>
-            </div>
-        </div>
-        <div id="listControls">
-            <button onclick="clearCompleted()">Clear Completed</button>
-            <select id="listSelect" onchange="switchList()" aria-label="Select list">
-                <option value="" disabled selected>Choose a list</option>
-            </select>
-            <button onclick="createNewList()">New List</button>
-            <button onclick="renameList()">Rename List</button>
-            <button id="deleteListButton" onclick="deleteList()">Delete List</button>
-            <button onclick="toggleImportExportControls()">Import/Export</button>
-            <button onclick="saveAsPreset()">Save as Preset</button>
-            <button id="toggleAddItem">Add New Item</button>
-        </div>
-        <div id="importExportControls">
-            <div id="importExportTabs">
-                <button class="tab-button active" onclick="openTab(event, 'importFile')">Import File</button>
-                <button class="tab-button" onclick="openTab(event, 'importText')">Import Text</button>
-                <button class="tab-button" onclick="openTab(event, 'exportList')">Export List</button>
-            </div>
-            <div id="importFile" class="tab-content">
-                <input type="file" id="fileInput" accept=".json,.csv" aria-label="Choose file to import">
-                <button onclick="importFile()">Import File</button>
-            </div>
-            <div id="importText" class="tab-content" style="display:none">
-                <textarea id="importTextArea" rows="5" cols="50" placeholder="Paste your JSON or CSV data here"></textarea>
-                <button onclick="importTextData()">Import Text Data</button>
-            </div>
-            <div id="exportList" class="tab-content" style="display:none">
-                <button onclick="exportList()">Export List</button>
-            </div>
-        </div>
-        <button id="themeToggle" aria-label="Toggle theme" onclick="toggleTheme()">🌙</button>
-        <button id="startTourButton" aria-label="Start tour" onclick="resetTour()">🚀</button>
-    </main>
-    <footer id="floating-footer">
-        <span>v<span id="app-version"></span></span> | <a href="mailto:george.g.larson@gmail.com">george.g.larson@gmail.com</a>
-    </footer>
-    <script src="tour.js"></script>
-    <script src="script.js"></script>
+    <nav>
+        <ul>
+            <li><a href="#resume">Resume</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#linkedin">LinkedIn</a></li>
+        </ul>
+    </nav>
+    <div id="resume">
+        <!-- Resume content will be inserted here -->
+    </div>
+    <div id="projects">
+        <h2>Projects</h2>
+        <ul>
+            <li><a href="https://github.com/georgeglarson/deep-research-privacy" target="_blank">Deep Research Privacy</a></li>
+        </ul>
+    </div>
+    <div id="linkedin">
+        <h2>LinkedIn</h2>
+        <p>Connect with me on <a href="https://www.linkedin.com/in/georgelarson/" target="_blank">LinkedIn</a></p>
+    </div>
+    <script>
+        fetch('resume.md')
+            .then(response => response.text())
+            .then(text => {
+                const markdownContent = marked.parse(text);
+                document.getElementById('resume').innerHTML = markdownContent;
+            });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </body>
 </html>
