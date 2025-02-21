@@ -59,11 +59,20 @@ nav {
 }
 
 .nav-container {
-    max-width: 1200px;
+    max-width: 800px;
     margin: 0 auto;
     display: flex;
     align-items: center;
+    justify-content: center;
     padding: 0 40px;
+    position: relative;
+}
+
+.terminal-logo {
+    position: absolute;
+    left: 0;
+    transform: translateX(-100%);
+    margin-left: -20px;
 }
 
 .terminal-logo {
@@ -571,11 +580,13 @@ a:hover {
         padding: 0 20px;
         flex-direction: column;
         gap: 15px;
+        max-width: none;
     }
 
     .terminal-logo {
-        margin-right: 0;
-        margin-bottom: 10px;
+        position: static;
+        transform: none;
+        margin: 0 0 10px 0;
     }
 
     nav ul {
