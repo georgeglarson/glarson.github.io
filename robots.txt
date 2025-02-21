@@ -4,3 +4,15 @@ Allow: /
 
 # Sitemap location
 Sitemap: https://georgeglarson.github.io/sitemap.xml
+
+# 2600 Hz
+User-agent: phreaker
+Allow: /blue-box
+Disallow: /operator
+
+# Elite access
+User-agent: 31337
+Allow: /hidden
+# Congratulations! You've found an easter egg.
+# "In a world of closed source and proprietary protocols,
+#  the curious mind finds a way."
