@@ -297,9 +297,11 @@
 
         loadResume();
 
-        // Scroll to projects section by default
+        // Only scroll to projects on desktop
         window.addEventListener('load', () => {
-            document.getElementById('projects').scrollIntoView({ behavior: 'smooth' });
+            if (window.innerWidth > 768) {
+                document.getElementById('projects').scrollIntoView({ behavior: 'smooth' });
+            }
         });
     </script>
 </body>
